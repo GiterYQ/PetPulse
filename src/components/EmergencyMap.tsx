@@ -121,7 +121,6 @@ export default function EmergencyMap({ phase, matches, showResults }: Props) {
         if (phase >= 2) alpha = 0.5;
         if (phase >= 3 && pet.bloodMatch) {
           alpha = 1;
-          color = '#00e676';
           dotSize = 6;
         }
         if (phase >= 3 && !pet.bloodMatch) {
