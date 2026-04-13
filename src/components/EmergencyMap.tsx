@@ -116,7 +116,6 @@ export default function EmergencyMap({ phase, matches, showResults }: Props) {
 
         // Determine visibility and color based on phase
         let alpha = 0.2;
-        let color = 'var(--text-muted)';
         let dotSize = 4;
 
         if (phase >= 2) alpha = 0.5;
