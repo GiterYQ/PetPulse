@@ -109,7 +109,7 @@ export default function EmergencyForm({ onSubmit, disabled }: Props) {
                       onClick={() => setUrgency(level)}
                       style={{
                         ...styles.urgencyBtn,
-                        ...(urgency === level ? styles.urgencyColors[level] : {}),
+                        ...(urgency === level ? urgencyColorMap[level] : {}),
                       }}
                     >
                       {level.toUpperCase()}
@@ -182,6 +182,24 @@ export default function EmergencyForm({ onSubmit, disabled }: Props) {
     </div>
   );
 }
+
+const urgencyColorMap: Record<string, React.CSSProperties> = {
+  low: {
+    background: 'var(--accent-green-dim)',
+    borderColor: 'var(--accent-green)',
+    color: 'var(--accent-green)',
+  },
+  medium: {
+    background: 'var(--accent-yellow-dim)',
+    borderColor: 'var(--accent-yellow)',
+    color: 'var(--accent-yellow)',
+  },
+  critical: {
+    background: 'var(--accent-red-dim)',
+    borderColor: 'var(--accent-red)',
+    color: 'var(--accent-red)',
+  },
+};
 
 const styles: Record<string, React.CSSProperties> = {
   container: {
@@ -288,23 +306,6 @@ const styles: Record<string, React.CSSProperties> = {
     cursor: 'pointer',
     transition: 'all 0.2s',
     letterSpacing: 0.5,
-  },
-  urgencyColors: {
-    low: {
-      background: 'var(--accent-green-dim)',
-      borderColor: 'var(--accent-green)',
-      color: 'var(--accent-green)',
-    },
-    medium: {
-      background: 'var(--accent-yellow-dim)',
-      borderColor: 'var(--accent-yellow)',
-      color: 'var(--accent-yellow)',
-    },
-    critical: {
-      background: 'var(--accent-red-dim)',
-      borderColor: 'var(--accent-red)',
-      color: 'var(--accent-red)',
-    },
   },
   submitBtn: {
     padding: '14px 16px',
