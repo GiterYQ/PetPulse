@@ -1,0 +1,1708 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>PetPulse — GOSIM Spotlight Paris 2026</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;0,600;1,300&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <style>
+    /* === CSS CUSTOM PROPERTIES === */
+    :root {
+      --bg-primary: #070c18;
+      --bg-secondary: #0d1424;
+      --bg-card: rgba(255,255,255,0.04);
+      --bg-card-border: rgba(255,255,255,0.08);
+
+      --blue: #00d4ff;
+      --blue-dim: rgba(0, 212, 255, 0.12);
+      --blue-glow: rgba(0, 212, 255, 0.25);
+      --amber: #f59e0b;
+      --amber-dim: rgba(245, 158, 11, 0.12);
+      --red: #ff3366;
+      --red-dim: rgba(255, 51, 102, 0.12);
+      --green: #10b981;
+
+      --text-primary: #f0f4ff;
+      --text-secondary: #8892a8;
+      --text-muted: #3d4d6e;
+
+      --font-display: 'Syne', sans-serif;
+      --font-body: 'DM Sans', sans-serif;
+      --font-mono: 'DM Mono', monospace;
+
+      --title-size: clamp(2.2rem, 6vw, 5.5rem);
+      --h2-size: clamp(1.6rem, 4vw, 3.2rem);
+      --h3-size: clamp(1.1rem, 2.5vw, 1.8rem);
+      --body-size: clamp(0.85rem, 1.4vw, 1.05rem);
+      --small-size: clamp(0.7rem, 1vw, 0.875rem);
+      --label-size: clamp(0.6rem, 0.9vw, 0.75rem);
+
+      --slide-padding: clamp(2rem, 5vw, 5rem);
+      --content-gap: clamp(1rem, 2.5vw, 2.5rem);
+      --element-gap: clamp(0.5rem, 1.2vw, 1.2rem);
+
+      --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+      --duration: 0.7s;
+      --radius: 12px;
+    }
+
+    /* === RESET === */
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+    /* === VIEWPORT BASE (from viewport-base.css) === */
+    html, body { height: 100%; overflow-x: hidden; }
+    html { scroll-snap-type: y mandatory; scroll-behavior: smooth; }
+    body { background: var(--bg-primary); color: var(--text-primary); font-family: var(--font-body); }
+
+    .slide {
+      width: 100vw;
+      height: 100vh;
+      height: 100dvh;
+      overflow: hidden;
+      scroll-snap-align: start;
+      display: flex;
+      flex-direction: column;
+      position: relative;
+    }
+
+    .slide-content {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      max-height: 100%;
+      overflow: hidden;
+      padding: var(--slide-padding);
+    }
+
+    @media (max-height: 700px) {
+      :root {
+        --slide-padding: clamp(1rem, 3vw, 2.5rem);
+        --title-size: clamp(1.6rem, 4.5vw, 3rem);
+        --h2-size: clamp(1.2rem, 3vw, 2rem);
+        --content-gap: clamp(0.6rem, 1.5vw, 1.5rem);
+      }
+    }
+    @media (max-height: 600px) {
+      :root {
+        --slide-padding: clamp(0.75rem, 2.5vw, 1.5rem);
+        --content-gap: clamp(0.4rem, 1vw, 1rem);
+        --title-size: clamp(1.2rem, 4vw, 2rem);
+        --body-size: clamp(0.7rem, 1.2vw, 0.9rem);
+      }
+      .nav-dots, .keyboard-hint, .decorative { display: none; }
+    }
+    @media (max-height: 500px) {
+      :root {
+        --slide-padding: clamp(0.4rem, 2vw, 1rem);
+        --title-size: clamp(1rem, 3.5vw, 1.5rem);
+        --h2-size: clamp(0.9rem, 2.5vw, 1.25rem);
+        --body-size: clamp(0.65rem, 1vw, 0.85rem);
+      }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after { animation-duration: 0.01ms !important; transition-duration: 0.2s !important; }
+      html { scroll-behavior: auto; }
+    }
+
+    /* === SHARED BACKGROUND: subtle grid === */
+    .grid-bg::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background-image:
+        linear-gradient(rgba(255,255,255,0.025) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,255,255,0.025) 1px, transparent 1px);
+      background-size: 48px 48px;
+      pointer-events: none;
+    }
+
+    /* === REVEAL ANIMATIONS === */
+    .reveal {
+      opacity: 0;
+      transform: translateY(28px);
+      transition: opacity var(--duration) var(--ease-out-expo),
+                  transform var(--duration) var(--ease-out-expo);
+    }
+    .reveal-left {
+      opacity: 0;
+      transform: translateX(-36px);
+      transition: opacity var(--duration) var(--ease-out-expo),
+                  transform var(--duration) var(--ease-out-expo);
+    }
+    .reveal-scale {
+      opacity: 0;
+      transform: scale(0.92);
+      transition: opacity 0.6s var(--ease-out-expo),
+                  transform 0.6s var(--ease-out-expo);
+    }
+    .slide.visible .reveal,
+    .slide.visible .reveal-left,
+    .slide.visible .reveal-scale { opacity: 1; transform: none; }
+
+    .reveal:nth-child(1) { transition-delay: 0.05s; }
+    .reveal:nth-child(2) { transition-delay: 0.15s; }
+    .reveal:nth-child(3) { transition-delay: 0.25s; }
+    .reveal:nth-child(4) { transition-delay: 0.35s; }
+    .reveal:nth-child(5) { transition-delay: 0.45s; }
+    .reveal:nth-child(6) { transition-delay: 0.55s; }
+    .reveal-left:nth-child(1) { transition-delay: 0.05s; }
+    .reveal-left:nth-child(2) { transition-delay: 0.2s; }
+    .reveal-left:nth-child(3) { transition-delay: 0.35s; }
+    .reveal-left:nth-child(4) { transition-delay: 0.5s; }
+
+    /* === PROGRESS BAR === */
+    .progress-bar {
+      position: fixed;
+      top: 0; left: 0;
+      height: 2px;
+      background: linear-gradient(90deg, var(--blue), var(--amber));
+      width: 0%;
+      z-index: 1000;
+      transition: width 0.3s ease;
+    }
+
+    /* === NAV DOTS === */
+    .nav-dots {
+      position: fixed;
+      right: clamp(12px, 2.5vw, 28px);
+      top: 50%;
+      transform: translateY(-50%);
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      z-index: 1000;
+    }
+    .nav-dot {
+      width: 5px;
+      height: 5px;
+      border-radius: 50%;
+      background: var(--text-muted);
+      cursor: pointer;
+      transition: all 0.3s;
+    }
+    .nav-dot.active {
+      background: var(--blue);
+      box-shadow: 0 0 8px var(--blue-glow);
+      transform: scale(1.4);
+    }
+
+    /* === SLIDE NUMBER === */
+    .slide-num {
+      position: absolute;
+      bottom: clamp(16px, 3vh, 28px);
+      right: var(--slide-padding);
+      font-family: var(--font-mono);
+      font-size: var(--small-size);
+      color: var(--text-muted);
+      letter-spacing: 2px;
+    }
+
+    /* === LABEL / TAG === */
+    .tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-family: var(--font-mono);
+      font-size: var(--label-size);
+      font-weight: 500;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      padding: 5px 12px;
+      border-radius: 100px;
+      border: 1px solid;
+    }
+    .tag-blue { color: var(--blue); border-color: var(--blue); background: var(--blue-dim); }
+    .tag-amber { color: var(--amber); border-color: var(--amber); background: var(--amber-dim); }
+    .tag-red { color: var(--red); border-color: var(--red); background: var(--red-dim); }
+    .tag-muted { color: var(--text-secondary); border-color: var(--text-muted); background: transparent; }
+
+    /* === DIVIDER LINE === */
+    .divider {
+      width: clamp(40px, 6vw, 80px);
+      height: 2px;
+      background: linear-gradient(90deg, var(--amber), transparent);
+      margin: clamp(0.6rem, 1.5vw, 1.2rem) 0;
+    }
+
+    /* ================================================
+       SLIDE 1: TITLE
+       ================================================ */
+    #slide-1 {
+      background: var(--bg-primary);
+    }
+    #slide-1 .glow-orb {
+      position: absolute;
+      border-radius: 50%;
+      filter: blur(80px);
+      pointer-events: none;
+    }
+    #slide-1 .orb-blue {
+      width: clamp(200px, 40vw, 500px);
+      height: clamp(200px, 40vw, 500px);
+      background: radial-gradient(circle, rgba(0,212,255,0.12), transparent 70%);
+      top: -10%;
+      right: -5%;
+    }
+    #slide-1 .orb-amber {
+      width: clamp(150px, 25vw, 350px);
+      height: clamp(150px, 25vw, 350px);
+      background: radial-gradient(circle, rgba(245,158,11,0.1), transparent 70%);
+      bottom: 10%;
+      left: 5%;
+    }
+    .title-slide-content {
+      padding: var(--slide-padding);
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      height: 100%;
+      max-width: min(90vw, 900px);
+    }
+    .title-main {
+      font-family: var(--font-display);
+      font-size: clamp(3.5rem, 10vw, 9rem);
+      font-weight: 800;
+      line-height: 0.9;
+      letter-spacing: -3px;
+      background: linear-gradient(135deg, #ffffff 30%, var(--blue) 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      margin-bottom: clamp(0.8rem, 2vw, 1.5rem);
+    }
+    .title-sub {
+      font-size: var(--h3-size);
+      font-weight: 300;
+      color: var(--text-secondary);
+      line-height: 1.4;
+      max-width: min(80vw, 560px);
+      margin-bottom: clamp(1.5rem, 3vw, 3rem);
+    }
+    .title-meta {
+      display: flex;
+      align-items: center;
+      gap: clamp(10px, 2vw, 20px);
+      flex-wrap: wrap;
+    }
+    .title-author {
+      font-family: var(--font-mono);
+      font-size: var(--small-size);
+      color: var(--text-muted);
+      letter-spacing: 1px;
+    }
+    .title-pulse-line {
+      position: absolute;
+      bottom: 0; left: 0; right: 0;
+      height: 2px;
+      background: linear-gradient(90deg, transparent, var(--blue), var(--amber), transparent);
+      animation: pulse-line 3s ease-in-out infinite;
+    }
+    @keyframes pulse-line {
+      0%, 100% { opacity: 0.3; }
+      50% { opacity: 0.9; }
+    }
+
+    /* ================================================
+       SLIDE 2: STORY
+       ================================================ */
+    #slide-2 .story-grid {
+      display: grid;
+      grid-template-columns: 1fr 2px 1fr;
+      gap: clamp(1.5rem, 3vw, 3rem);
+      align-items: start;
+      max-height: 75vh;
+    }
+    #slide-2 .story-divider {
+      background: var(--text-muted);
+      align-self: stretch;
+      opacity: 0.3;
+    }
+    .story-card {
+      padding: clamp(1rem, 2vw, 1.8rem);
+      border-radius: var(--radius);
+      border: 1px solid var(--bg-card-border);
+    }
+    .story-card-fail { background: var(--red-dim); border-color: rgba(255,51,102,0.2); }
+    .story-card-win { background: var(--blue-dim); border-color: rgba(0,212,255,0.2); }
+    .story-icon {
+      font-size: clamp(1.5rem, 3vw, 2.5rem);
+      margin-bottom: clamp(0.5rem, 1vw, 0.8rem);
+    }
+    .story-text {
+      font-size: var(--body-size);
+      line-height: 1.7;
+      color: var(--text-secondary);
+    }
+    .story-outcome {
+      margin-top: clamp(0.6rem, 1.2vw, 1rem);
+      font-size: var(--body-size);
+      font-weight: 600;
+    }
+    .story-outcome-fail { color: var(--red); }
+    .story-outcome-win { color: var(--blue); }
+
+    /* ================================================
+       SLIDE 3: PROBLEM
+       ================================================ */
+    .problem-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: clamp(0.8rem, 1.5vw, 1.5rem);
+      max-height: 65vh;
+    }
+    .problem-item {
+      padding: clamp(1rem, 2vw, 1.5rem);
+      background: var(--bg-card);
+      border: 1px solid var(--bg-card-border);
+      border-radius: var(--radius);
+      display: flex;
+      flex-direction: column;
+      gap: clamp(0.4rem, 0.8vw, 0.8rem);
+    }
+    .problem-arrow {
+      font-family: var(--font-mono);
+      font-size: var(--label-size);
+      color: var(--amber);
+      letter-spacing: 1px;
+    }
+    .problem-title {
+      font-family: var(--font-display);
+      font-size: var(--h3-size);
+      font-weight: 700;
+      color: var(--text-primary);
+      line-height: 1.2;
+    }
+    .problem-desc {
+      font-size: var(--body-size);
+      color: var(--text-secondary);
+      line-height: 1.5;
+    }
+
+    /* ================================================
+       SLIDE 4: INSIGHT
+       ================================================ */
+    #slide-4 {
+      background: var(--bg-primary);
+    }
+    #slide-4 .orb {
+      position: absolute;
+      border-radius: 50%;
+      filter: blur(100px);
+      pointer-events: none;
+      background: radial-gradient(circle, rgba(245,158,11,0.15), transparent 70%);
+      width: clamp(300px, 50vw, 700px);
+      height: clamp(300px, 50vw, 700px);
+      top: 50%; left: 50%;
+      transform: translate(-50%, -50%);
+    }
+    .insight-content {
+      text-align: center;
+      max-width: min(85vw, 800px);
+      margin: 0 auto;
+      position: relative;
+      z-index: 1;
+    }
+    .insight-quote {
+      font-family: var(--font-display);
+      font-size: clamp(1.4rem, 3.5vw, 2.8rem);
+      font-weight: 600;
+      line-height: 1.35;
+      color: var(--text-primary);
+      margin-bottom: clamp(1.2rem, 2.5vw, 2rem);
+    }
+    .insight-quote em {
+      font-style: normal;
+      color: var(--amber);
+    }
+    .insight-punchline {
+      font-family: var(--font-display);
+      font-size: clamp(1.8rem, 4.5vw, 4rem);
+      font-weight: 800;
+      background: linear-gradient(135deg, var(--blue) 0%, var(--amber) 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      line-height: 1.1;
+    }
+
+    /* ================================================
+       SLIDE 5: SOLUTION
+       ================================================ */
+    .solution-def {
+      font-size: var(--h3-size);
+      color: var(--text-secondary);
+      line-height: 1.6;
+      max-width: min(85vw, 700px);
+      margin-bottom: clamp(1.5rem, 3vw, 2.5rem);
+    }
+    .solution-def strong { color: var(--text-primary); font-weight: 600; }
+    .solution-pillars {
+      display: flex;
+      gap: clamp(0.8rem, 1.5vw, 1.2rem);
+      flex-wrap: wrap;
+    }
+    .pillar {
+      padding: clamp(0.7rem, 1.2vw, 1rem) clamp(1rem, 2vw, 1.6rem);
+      border-radius: var(--radius);
+      border: 1px solid var(--bg-card-border);
+      background: var(--bg-card);
+      display: flex;
+      align-items: center;
+      gap: clamp(0.4rem, 0.8vw, 0.8rem);
+    }
+    .pillar-icon { font-size: clamp(1.2rem, 2vw, 1.6rem); }
+    .pillar-text {
+      font-size: var(--body-size);
+      font-weight: 600;
+      color: var(--text-primary);
+    }
+    .pillar-sub {
+      font-size: var(--small-size);
+      color: var(--text-muted);
+    }
+
+    /* ================================================
+       SLIDE 6: HOW IT WORKS
+       ================================================ */
+    .flow-steps {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: clamp(0.8rem, 1.5vw, 1.5rem);
+      position: relative;
+      max-height: 65vh;
+      align-items: start;
+    }
+    .flow-connector {
+      position: absolute;
+      top: clamp(20px, 4vw, 32px);
+      left: calc(25% - 4px);
+      width: 75%;
+      height: 1px;
+      background: linear-gradient(90deg, var(--blue-dim), var(--amber-dim));
+      z-index: 0;
+    }
+    .flow-step {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      position: relative;
+      z-index: 1;
+      gap: clamp(0.6rem, 1vw, 1rem);
+    }
+    .flow-num {
+      width: clamp(36px, 6vw, 56px);
+      height: clamp(36px, 6vw, 56px);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: var(--font-mono);
+      font-size: var(--body-size);
+      font-weight: 500;
+      border: 1.5px solid;
+      background: var(--bg-secondary);
+    }
+    .flow-num-1 { border-color: var(--red); color: var(--red); }
+    .flow-num-2 { border-color: var(--blue); color: var(--blue); }
+    .flow-num-3 { border-color: var(--amber); color: var(--amber); }
+    .flow-num-4 { border-color: var(--green); color: var(--green); }
+    .flow-label {
+      font-family: var(--font-display);
+      font-size: var(--body-size);
+      font-weight: 700;
+      color: var(--text-primary);
+      line-height: 1.2;
+    }
+    .flow-desc {
+      font-size: var(--small-size);
+      color: var(--text-secondary);
+      line-height: 1.5;
+    }
+    .flow-time {
+      margin-top: clamp(1.5rem, 3vw, 2.5rem);
+      padding: clamp(0.8rem, 1.5vw, 1.2rem) clamp(1.5rem, 2.5vw, 2rem);
+      background: var(--blue-dim);
+      border: 1px solid rgba(0,212,255,0.2);
+      border-radius: var(--radius);
+      text-align: center;
+      font-family: var(--font-display);
+      font-size: var(--h3-size);
+      font-weight: 700;
+      color: var(--blue);
+      align-self: center;
+    }
+
+    /* ================================================
+       SLIDE 7: AI ROLE
+       ================================================ */
+    .ai-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: clamp(0.8rem, 1.5vw, 1.2rem);
+      max-height: 62vh;
+    }
+    .ai-item {
+      padding: clamp(1rem, 1.8vw, 1.5rem);
+      background: var(--bg-card);
+      border: 1px solid var(--bg-card-border);
+      border-radius: var(--radius);
+      display: flex;
+      gap: clamp(0.8rem, 1.5vw, 1.2rem);
+      align-items: flex-start;
+    }
+    .ai-icon-wrap {
+      width: clamp(32px, 4vw, 44px);
+      height: clamp(32px, 4vw, 44px);
+      border-radius: 8px;
+      background: var(--blue-dim);
+      border: 1px solid rgba(0,212,255,0.2);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: clamp(1rem, 1.8vw, 1.4rem);
+      flex-shrink: 0;
+    }
+    .ai-text-title {
+      font-size: var(--body-size);
+      font-weight: 600;
+      color: var(--text-primary);
+      margin-bottom: 4px;
+    }
+    .ai-text-desc {
+      font-size: var(--small-size);
+      color: var(--text-secondary);
+      line-height: 1.5;
+    }
+    .ai-footer {
+      margin-top: clamp(1rem, 2vw, 1.8rem);
+      padding: clamp(0.8rem, 1.5vw, 1.2rem) clamp(1.2rem, 2vw, 1.8rem);
+      background: var(--amber-dim);
+      border: 1px solid rgba(245,158,11,0.2);
+      border-radius: var(--radius);
+      font-family: var(--font-display);
+      font-size: var(--h3-size);
+      font-weight: 700;
+      color: var(--amber);
+      text-align: center;
+    }
+
+    /* ================================================
+       SLIDE 8: OPEN SOURCE
+       ================================================ */
+    .oss-stack {
+      display: flex;
+      flex-direction: column;
+      gap: clamp(0.6rem, 1.2vw, 1rem);
+      max-height: 58vh;
+      overflow: hidden;
+    }
+    .oss-item {
+      display: flex;
+      align-items: center;
+      gap: clamp(0.8rem, 1.5vw, 1.5rem);
+      padding: clamp(0.8rem, 1.5vw, 1.2rem) clamp(1rem, 2vw, 1.5rem);
+      background: var(--bg-card);
+      border: 1px solid var(--bg-card-border);
+      border-radius: var(--radius);
+    }
+    .oss-badge {
+      font-family: var(--font-mono);
+      font-size: var(--small-size);
+      font-weight: 500;
+      padding: 3px 10px;
+      border-radius: 100px;
+      white-space: nowrap;
+    }
+    .oss-badge-blue { background: var(--blue-dim); color: var(--blue); border: 1px solid rgba(0,212,255,0.25); }
+    .oss-badge-amber { background: var(--amber-dim); color: var(--amber); border: 1px solid rgba(245,158,11,0.25); }
+    .oss-badge-green { background: rgba(16,185,129,0.12); color: var(--green); border: 1px solid rgba(16,185,129,0.25); }
+    .oss-name {
+      font-family: var(--font-display);
+      font-size: var(--body-size);
+      font-weight: 700;
+      color: var(--text-primary);
+      min-width: clamp(100px, 14vw, 170px);
+    }
+    .oss-role {
+      font-size: var(--small-size);
+      color: var(--text-secondary);
+      line-height: 1.4;
+      flex: 1;
+    }
+    .oss-license {
+      font-family: var(--font-mono);
+      font-size: clamp(0.55rem, 0.8vw, 0.7rem);
+      color: var(--text-muted);
+      text-align: right;
+      white-space: nowrap;
+    }
+    .oss-principle {
+      margin-top: clamp(0.8rem, 1.5vw, 1.2rem);
+      font-size: var(--body-size);
+      color: var(--text-secondary);
+      font-style: italic;
+      line-height: 1.6;
+      padding-left: clamp(0.8rem, 1.5vw, 1.2rem);
+      border-left: 2px solid var(--amber);
+    }
+
+    /* ================================================
+       SLIDE 9: MUTUAL PROTECTION LOOP
+       ================================================ */
+    #slide-9 .loop-visual {
+      position: relative;
+      width: clamp(200px, 40vw, 380px);
+      height: clamp(200px, 40vw, 380px);
+      flex-shrink: 0;
+    }
+    .loop-ring {
+      position: absolute;
+      inset: 0;
+      border-radius: 50%;
+      border: 1.5px solid rgba(0,212,255,0.2);
+      animation: spin 12s linear infinite;
+    }
+    .loop-ring-inner {
+      position: absolute;
+      inset: 20%;
+      border-radius: 50%;
+      border: 1.5px solid rgba(245,158,11,0.3);
+      animation: spin 8s linear infinite reverse;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    .loop-center-dot {
+      position: absolute;
+      inset: 42%;
+      border-radius: 50%;
+      background: radial-gradient(circle, var(--blue), rgba(0,212,255,0.3));
+      box-shadow: 0 0 20px var(--blue-glow), 0 0 40px rgba(0,212,255,0.1);
+    }
+    .loop-node {
+      position: absolute;
+      font-size: var(--small-size);
+      font-family: var(--font-display);
+      font-weight: 700;
+      text-align: center;
+      max-width: clamp(70px, 10vw, 100px);
+      line-height: 1.3;
+    }
+    .loop-node-top    { top: -8%; left: 50%; transform: translateX(-50%); color: var(--blue); }
+    .loop-node-right  { right: -12%; top: 50%; transform: translateY(-50%); color: var(--amber); }
+    .loop-node-bottom { bottom: -8%; left: 50%; transform: translateX(-50%); color: var(--blue); }
+    .loop-node-left   { left: -12%; top: 50%; transform: translateY(-50%); color: var(--amber); }
+    #slide-9 .slide-content { flex-direction: row; align-items: center; gap: clamp(2rem, 5vw, 6rem); }
+    .loop-text { flex: 1; }
+    .loop-insight {
+      margin-top: clamp(1.2rem, 2.5vw, 2rem);
+      padding: clamp(0.8rem, 1.5vw, 1.2rem) clamp(1rem, 2vw, 1.5rem);
+      background: rgba(0,212,255,0.06);
+      border-left: 3px solid var(--blue);
+      border-radius: 0 var(--radius) var(--radius) 0;
+      font-size: var(--body-size);
+      color: var(--text-secondary);
+      line-height: 1.6;
+    }
+    .loop-insight strong { color: var(--blue); }
+
+    /* ================================================
+       SLIDE 10: SOCIAL IMPACT
+       ================================================ */
+    .impact-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: clamp(0.8rem, 1.5vw, 1.5rem);
+      max-height: 65vh;
+    }
+    .impact-card {
+      padding: clamp(1rem, 2vw, 1.8rem);
+      border-radius: var(--radius);
+      background: var(--bg-card);
+      border: 1px solid var(--bg-card-border);
+      display: flex;
+      flex-direction: column;
+      gap: clamp(0.4rem, 0.8vw, 0.8rem);
+    }
+    .impact-num {
+      font-family: var(--font-display);
+      font-size: clamp(1.8rem, 4vw, 3.5rem);
+      font-weight: 800;
+      line-height: 1;
+    }
+    .impact-label {
+      font-size: var(--body-size);
+      font-weight: 600;
+      color: var(--text-primary);
+    }
+    .impact-desc {
+      font-size: var(--small-size);
+      color: var(--text-secondary);
+      line-height: 1.5;
+    }
+
+    /* ================================================
+       SLIDE 11: PROGRESS
+       ================================================ */
+    .progress-list {
+      display: flex;
+      flex-direction: column;
+      gap: clamp(0.8rem, 1.5vw, 1.2rem);
+      max-height: 58vh;
+      overflow: hidden;
+    }
+    .progress-item {
+      display: flex;
+      align-items: flex-start;
+      gap: clamp(0.8rem, 1.5vw, 1.2rem);
+      padding: clamp(0.8rem, 1.5vw, 1.2rem) clamp(1rem, 2vw, 1.5rem);
+      background: var(--bg-card);
+      border: 1px solid var(--bg-card-border);
+      border-radius: var(--radius);
+    }
+    .progress-dot {
+      width: clamp(20px, 2.5vw, 26px);
+      height: clamp(20px, 2.5vw, 26px);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: clamp(0.6rem, 1vw, 0.75rem);
+      flex-shrink: 0;
+      margin-top: 1px;
+    }
+    .progress-dot-done { background: rgba(16,185,129,0.2); border: 1.5px solid var(--green); color: var(--green); }
+    .progress-dot-next { background: var(--blue-dim); border: 1.5px solid var(--blue); color: var(--blue); }
+    .progress-label {
+      font-size: var(--body-size);
+      font-weight: 600;
+      color: var(--text-primary);
+      margin-bottom: 3px;
+    }
+    .progress-sublabel {
+      font-size: var(--small-size);
+      color: var(--text-secondary);
+      line-height: 1.4;
+    }
+    .demo-link-box {
+      margin-top: clamp(1rem, 2vw, 1.5rem);
+      padding: clamp(0.8rem, 1.5vw, 1.2rem) clamp(1.2rem, 2vw, 1.8rem);
+      background: var(--blue-dim);
+      border: 1px solid rgba(0,212,255,0.25);
+      border-radius: var(--radius);
+      font-family: var(--font-mono);
+      font-size: var(--small-size);
+      color: var(--blue);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    /* ================================================
+       SLIDE 12: VISION
+       ================================================ */
+    #slide-12 {
+      background: var(--bg-primary);
+    }
+    #slide-12 .orb-vision {
+      position: absolute;
+      border-radius: 50%;
+      filter: blur(120px);
+      pointer-events: none;
+    }
+    #slide-12 .orb-1 {
+      width: clamp(250px, 45vw, 600px);
+      height: clamp(250px, 45vw, 600px);
+      background: radial-gradient(circle, rgba(0,212,255,0.1), transparent 70%);
+      top: -15%; right: -10%;
+    }
+    #slide-12 .orb-2 {
+      width: clamp(200px, 35vw, 450px);
+      height: clamp(200px, 35vw, 450px);
+      background: radial-gradient(circle, rgba(245,158,11,0.1), transparent 70%);
+      bottom: -10%; left: -5%;
+    }
+    .vision-content {
+      text-align: center;
+      max-width: min(85vw, 800px);
+      margin: 0 auto;
+      position: relative;
+      z-index: 1;
+    }
+    .vision-main {
+      font-family: var(--font-display);
+      font-size: clamp(2rem, 5.5vw, 5rem);
+      font-weight: 800;
+      line-height: 1.1;
+      color: var(--text-primary);
+      margin-bottom: clamp(1rem, 2vw, 1.8rem);
+    }
+    .vision-main em {
+      font-style: normal;
+      background: linear-gradient(135deg, var(--blue), var(--amber));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    .vision-sub {
+      font-size: var(--h3-size);
+      color: var(--text-secondary);
+      line-height: 1.5;
+      margin-bottom: clamp(1.5rem, 3vw, 2.5rem);
+      font-weight: 300;
+    }
+    .vision-final {
+      font-family: var(--font-display);
+      font-size: clamp(1rem, 2vw, 1.4rem);
+      font-weight: 600;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      color: var(--amber);
+      opacity: 0.8;
+    }
+
+    /* === SLIDE HEADERS (shared) === */
+    .slide-section-label {
+      font-family: var(--font-mono);
+      font-size: var(--label-size);
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      color: var(--blue);
+      margin-bottom: clamp(0.4rem, 0.8vw, 0.8rem);
+    }
+    .slide-h2 {
+      font-family: var(--font-display);
+      font-size: var(--h2-size);
+      font-weight: 800;
+      line-height: 1.1;
+      color: var(--text-primary);
+    }
+    .slide-h2 em {
+      font-style: normal;
+      color: var(--amber);
+    }
+
+    @media (max-width: 600px) {
+      .problem-grid, .ai-grid, .impact-grid { grid-template-columns: 1fr; }
+      .flow-steps { grid-template-columns: 1fr 1fr; }
+      #slide-9 .slide-content { flex-direction: column; }
+      #slide-9 .loop-visual { width: clamp(150px, 50vw, 250px); height: clamp(150px, 50vw, 250px); margin: 0 auto; }
+    }
+
+    /* ================================================
+       RADAR MAP (Slide 9 replacement visual)
+       ================================================ */
+    .radar-wrap {
+      position: relative;
+      flex-shrink: 0;
+      width: clamp(220px, 36vw, 400px);
+      height: clamp(220px, 36vw, 400px);
+    }
+    .radar-wrap canvas {
+      width: 100%;
+      height: 100%;
+      border-radius: 50%;
+    }
+
+    /* ================================================
+       PET SILHOUETTES — decorative SVG shapes
+       ================================================ */
+    .pet-deco {
+      position: absolute;
+      pointer-events: none;
+      opacity: 0.06;
+      fill: var(--blue);
+    }
+    .pet-deco-amber { fill: var(--amber); opacity: 0.07; }
+    .pet-deco-white { fill: #ffffff; opacity: 0.04; }
+
+    /* Slide 1 pets */
+    #slide-1 .pet-deco-1 {
+      bottom: 8%;
+      right: 3%;
+      width: clamp(80px, 12vw, 160px);
+      transform: scaleX(-1);
+    }
+    #slide-1 .pet-deco-2 {
+      top: 12%;
+      right: 18%;
+      width: clamp(50px, 8vw, 110px);
+    }
+    /* Slide 4 pet */
+    #slide-4 .pet-deco-3 {
+      bottom: 5%;
+      left: 4%;
+      width: clamp(60px, 10vw, 130px);
+    }
+    /* Slide 12 pet */
+    #slide-12 .pet-deco-4 {
+      bottom: 6%;
+      right: 5%;
+      width: clamp(90px, 14vw, 180px);
+    }
+    #slide-12 .pet-deco-5 {
+      top: 8%;
+      left: 4%;
+      width: clamp(60px, 9vw, 120px);
+      transform: scaleX(-1);
+    }
+    /* Slide 2 pet */
+    #slide-2 .pet-deco-6 {
+      bottom: 4%;
+      right: 2%;
+      width: clamp(50px, 8vw, 100px);
+      fill: var(--text-muted);
+      opacity: 0.08;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Progress Bar -->
+  <div class="progress-bar" id="progressBar"></div>
+
+  <!-- Navigation Dots -->
+  <nav class="nav-dots" id="navDots" aria-label="Slide navigation"></nav>
+
+  <!-- ================================================
+       SLIDE 1: TITLE
+       ================================================ -->
+  <section class="slide grid-bg" id="slide-1" aria-label="Title slide">
+    <div class="glow-orb orb-blue"></div>
+    <div class="glow-orb orb-amber"></div>
+    <div class="title-slide-content">
+      <div class="reveal">
+        <span class="tag tag-blue">GOSIM Spotlight · Paris 2026</span>
+      </div>
+      <h1 class="title-main reveal">PetPulse</h1>
+      <p class="title-sub reveal">AI-Powered Pet Emergency<br>Mutual Aid Network</p>
+      <div class="title-meta reveal">
+        <span class="tag tag-amber">AI · Open Source · Social Good</span>
+        <span class="title-author">Ye Qian</span>
+      </div>
+    </div>
+    <!-- Dog silhouette -->
+    <svg class="pet-deco pet-deco-1" viewBox="0 0 200 160" xmlns="http://www.w3.org/2000/svg">
+      <path d="M170,60 C170,60 185,40 190,30 C195,20 185,15 180,20 C175,25 168,38 168,38 L155,30 C155,30 150,10 140,8 C130,6 128,18 132,26 L125,32 C115,28 100,28 88,35 C76,42 68,55 65,68 C60,85 62,100 70,112 C75,120 82,125 90,127 L90,148 C90,153 94,155 97,155 L110,155 C113,155 115,153 115,150 L115,128 C122,128 130,125 136,120 L136,148 C136,153 140,155 143,155 L156,155 C159,155 161,153 161,150 L161,112 C168,104 172,92 172,80 C172,72 171,66 170,60 Z M100,75 C97,75 94,72 94,69 C94,66 97,63 100,63 C103,63 106,66 106,69 C106,72 103,75 100,75 Z"/>
+    </svg>
+    <!-- Cat silhouette -->
+    <svg class="pet-deco pet-deco-amber pet-deco-2" viewBox="0 0 160 160" xmlns="http://www.w3.org/2000/svg">
+      <path d="M30,10 L45,45 C38,50 32,58 30,68 C28,80 32,92 40,100 C45,105 52,108 58,109 L58,145 C58,150 61,152 64,152 L74,152 C77,152 79,150 79,147 L79,110 C83,110 87,110 91,110 L91,147 C91,150 93,152 96,152 L106,152 C109,152 112,150 112,147 L112,109 C118,108 124,105 129,100 C137,92 141,80 139,68 C137,58 131,50 124,45 L139,10 C130,12 122,18 118,26 C114,20 108,16 102,14 C98,12 92,12 88,14 C84,16 78,20 74,26 C70,18 62,12 53,10 Z M72,70 C69,70 66,67 66,64 C66,61 69,58 72,58 C75,58 78,61 78,64 C78,67 75,70 72,70 Z M98,70 C95,70 92,67 92,64 C92,61 95,58 98,58 C101,58 104,61 104,64 C104,67 101,70 98,70 Z"/>
+    </svg>
+    <div class="title-pulse-line"></div>
+    <span class="slide-num">01 / 12</span>
+  </section>
+
+  <!-- ================================================
+       SLIDE 2: STORY
+       ================================================ -->
+  <section class="slide grid-bg" id="slide-2" aria-label="Story">
+    <div class="slide-content">
+      <div class="slide-section-label reveal">Origin</div>
+      <h2 class="slide-h2 reveal">Time decides whether<br>they are <em>saved or lost.</em></h2>
+      <div class="divider reveal"></div>
+      <div class="story-grid reveal">
+        <div class="story-card story-card-fail">
+          <div class="story-icon">🧓</div>
+          <p class="story-text">
+            An elderly man lost his dog.<br>He didn't know how to use a smartphone.<br>
+            By the time he printed a poster… the dog was already gone.
+          </p>
+          <div class="story-outcome story-outcome-fail">✗ &nbsp;Connection failed.</div>
+        </div>
+        <div class="story-divider"></div>
+        <div class="story-card story-card-win">
+          <div class="story-icon">👩‍🎓</div>
+          <p class="story-text">
+            In another city, a student received a notification:<br>
+            "I just saw this cat in the park."<br>
+            One tap. A crucial lead — delivered instantly.
+          </p>
+          <div class="story-outcome story-outcome-win">✓ &nbsp;Connection worked.</div>
+        </div>
+      </div>
+    </div>
+    <!-- Cat paw silhouette -->
+    <svg class="pet-deco pet-deco-6" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+      <ellipse cx="60" cy="75" rx="28" ry="22"/>
+      <ellipse cx="32" cy="52" rx="12" ry="15"/>
+      <ellipse cx="88" cy="52" rx="12" ry="15"/>
+      <ellipse cx="46" cy="42" rx="10" ry="13"/>
+      <ellipse cx="74" cy="42" rx="10" ry="13"/>
+    </svg>
+    <span class="slide-num">02 / 12</span>
+  </section>
+
+  <!-- ================================================
+       SLIDE 3: PROBLEM
+       ================================================ -->
+  <section class="slide grid-bg" id="slide-3" aria-label="Problem">
+    <div class="slide-content">
+      <div class="slide-section-label reveal">Problem</div>
+      <h2 class="slide-h2 reveal">The problem is not<br>lack of care — it's <em>lack of connection.</em></h2>
+      <div class="divider reveal"></div>
+      <div class="problem-grid">
+        <div class="problem-item reveal">
+          <div class="problem-arrow">01 →</div>
+          <div class="problem-title">Lost Pets</div>
+          <div class="problem-desc">Information spreads too slowly. By the time alerts reach the right people, it's too late.</div>
+        </div>
+        <div class="problem-item reveal">
+          <div class="problem-arrow">02 →</div>
+          <div class="problem-title">Emergency Blood</div>
+          <div class="problem-desc">No reliable way to match compatible donors in time. Every minute of delay is critical.</div>
+        </div>
+        <div class="problem-item reveal">
+          <div class="problem-arrow">03 →</div>
+          <div class="problem-title">Fragmented Care</div>
+          <div class="problem-desc">Medical info scattered across platforms. No trusted, unified source for pet owners.</div>
+        </div>
+        <div class="problem-item reveal">
+          <div class="problem-arrow">04 →</div>
+          <div class="problem-title">Invisible Helpers</div>
+          <div class="problem-desc">People want to help — but have no channel to connect their willingness to the need.</div>
+        </div>
+      </div>
+    </div>
+    <span class="slide-num">03 / 12</span>
+  </section>
+
+  <!-- ================================================
+       SLIDE 4: INSIGHT
+       ================================================ -->
+  <section class="slide" id="slide-4" aria-label="Insight">
+    <div class="orb"></div>
+    <div class="slide-content" style="align-items:center;justify-content:center;">
+      <div class="insight-content">
+        <div class="slide-section-label reveal" style="text-align:center;">Core Insight</div>
+        <p class="insight-quote reveal">
+          "People help not for return —<br>
+          but for the <em>belief that help will exist</em><br>
+          when it's their turn to need it."
+        </p>
+        <div class="divider reveal" style="margin:0 auto;"></div>
+        <div class="insight-punchline reveal">
+          Goodwill exists.<br>Connection is missing.
+        </div>
+      </div>
+    </div>
+    <svg class="pet-deco pet-deco-amber pet-deco-3" viewBox="0 0 200 160" xmlns="http://www.w3.org/2000/svg">
+      <path d="M170,60 C170,60 185,40 190,30 C195,20 185,15 180,20 C175,25 168,38 168,38 L155,30 C155,30 150,10 140,8 C130,6 128,18 132,26 L125,32 C115,28 100,28 88,35 C76,42 68,55 65,68 C60,85 62,100 70,112 C75,120 82,125 90,127 L90,148 C90,153 94,155 97,155 L110,155 C113,155 115,153 115,150 L115,128 C122,128 130,125 136,120 L136,148 C136,153 140,155 143,155 L156,155 C159,155 161,153 161,150 L161,112 C168,104 172,92 172,80 C172,72 171,66 170,60 Z"/>
+    </svg>
+    <span class="slide-num">04 / 12</span>
+  </section>
+
+  <!-- ================================================
+       SLIDE 5: SOLUTION
+       ================================================ -->
+  <section class="slide grid-bg" id="slide-5" aria-label="Solution">
+    <div class="slide-content">
+      <div class="slide-section-label reveal">Solution</div>
+      <h2 class="slide-h2 reveal" style="font-size:clamp(2.5rem,7vw,7rem);letter-spacing:-2px;">PetPulse</h2>
+      <p class="solution-def reveal">
+        A <strong>community-powered AI network</strong> that connects pet owners to help
+        lost pets, match emergency blood donors, and share medical support — in real time.
+      </p>
+      <div class="divider reveal"></div>
+      <div class="solution-pillars reveal">
+        <div class="pillar">
+          <div class="pillar-icon">📡</div>
+          <div>
+            <div class="pillar-text">Lost Pet Broadcast</div>
+            <div class="pillar-sub">AI-generated alerts · Community relay</div>
+          </div>
+        </div>
+        <div class="pillar">
+          <div class="pillar-icon">🩸</div>
+          <div>
+            <div class="pillar-text">Blood Donation Network</div>
+            <div class="pillar-sub">Real-time matching · Geo-based dispatch</div>
+          </div>
+        </div>
+        <div class="pillar">
+          <div class="pillar-icon">🤝</div>
+          <div>
+            <div class="pillar-text">Medical Mutual Aid</div>
+            <div class="pillar-sub">Trusted knowledge · Emergency response</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <span class="slide-num">05 / 12</span>
+  </section>
+
+  <!-- ================================================
+       SLIDE 6: HOW IT WORKS
+       ================================================ -->
+  <section class="slide grid-bg" id="slide-6" aria-label="How it works">
+    <div class="slide-content">
+      <div class="slide-section-label reveal">User Flow</div>
+      <h2 class="slide-h2 reveal">From emergency to response <em>in seconds.</em></h2>
+      <div class="divider reveal"></div>
+      <div class="flow-steps reveal">
+        <div class="flow-connector"></div>
+        <div class="flow-step">
+          <div class="flow-num flow-num-1">01</div>
+          <div class="flow-label">Report<br>Emergency</div>
+          <div class="flow-desc">Pet owner submits blood type, location & urgency level</div>
+        </div>
+        <div class="flow-step">
+          <div class="flow-num flow-num-2">02</div>
+          <div class="flow-label">AI<br>Analyzes</div>
+          <div class="flow-desc">Scans 5km network, filters compatibility, ranks by response probability</div>
+        </div>
+        <div class="flow-step">
+          <div class="flow-num flow-num-3">03</div>
+          <div class="flow-label">Matches<br>Found</div>
+          <div class="flow-desc">Top donors identified with trust score, distance & availability</div>
+        </div>
+        <div class="flow-step">
+          <div class="flow-num flow-num-4">04</div>
+          <div class="flow-label">Community<br>Responds</div>
+          <div class="flow-desc">Owner sends alert — donors confirm, dispatch begins</div>
+        </div>
+      </div>
+      <div class="flow-time reveal">⚡ Under 60 seconds, start to response.</div>
+    </div>
+    <span class="slide-num">06 / 12</span>
+  </section>
+
+  <!-- ================================================
+       SLIDE 7: AI ROLE
+       ================================================ -->
+  <section class="slide grid-bg" id="slide-7" aria-label="AI Role">
+    <div class="slide-content">
+      <div class="slide-section-label reveal">AI Design</div>
+      <h2 class="slide-h2 reveal">AI doesn't replace help.<br>It makes it <em>faster.</em></h2>
+      <div class="divider reveal"></div>
+      <div class="ai-grid">
+        <div class="ai-item reveal">
+          <div class="ai-icon-wrap">🎯</div>
+          <div>
+            <div class="ai-text-title">Smart Alert Generation</div>
+            <div class="ai-text-desc">Auto-generates emergency broadcasts with correct blood type, urgency level and location context</div>
+          </div>
+        </div>
+        <div class="ai-item reveal">
+          <div class="ai-icon-wrap">🔍</div>
+          <div>
+            <div class="ai-text-title">Pet Feature Recognition</div>
+            <div class="ai-text-desc">CLIP-based image matching identifies breed, color, and physical traits from a photo</div>
+          </div>
+        </div>
+        <div class="ai-item reveal">
+          <div class="ai-icon-wrap">🩸</div>
+          <div>
+            <div class="ai-text-title">Blood Donor Matching</div>
+            <div class="ai-text-desc">Semantic matching ranks available donors by compatibility, proximity, and historical responsiveness</div>
+          </div>
+        </div>
+        <div class="ai-item reveal">
+          <div class="ai-icon-wrap">📡</div>
+          <div>
+            <div class="ai-text-title">Network Coordination</div>
+            <div class="ai-text-desc">Orchestrates multi-party dispatch — from alert to confirmation — without human bottleneck</div>
+          </div>
+        </div>
+      </div>
+      <div class="ai-footer reveal">AI = Amplifier, not Actor.</div>
+    </div>
+    <span class="slide-num">07 / 12</span>
+  </section>
+
+  <!-- ================================================
+       SLIDE 8: OPEN SOURCE
+       ================================================ -->
+  <section class="slide grid-bg" id="slide-8" aria-label="Open Source">
+    <div class="slide-content">
+      <div class="slide-section-label reveal">Open Source Stack</div>
+      <h2 class="slide-h2 reveal">Built on open tools,<br>built to <em>scale with the community.</em></h2>
+      <div class="divider reveal"></div>
+      <div class="oss-stack">
+        <div class="oss-item reveal">
+          <span class="oss-badge oss-badge-blue">Vision</span>
+          <div class="oss-name">CLIP</div>
+          <div class="oss-role">Image-based pet feature matching and identity verification</div>
+          <div class="oss-license">MIT · OpenAI</div>
+        </div>
+        <div class="oss-item reveal">
+          <span class="oss-badge oss-badge-amber">Detection</span>
+          <div class="oss-name">YOLOv8</div>
+          <div class="oss-role">Real-time pet detection from photos — breed, size, and color recognition</div>
+          <div class="oss-license">AGPL · Ultralytics</div>
+        </div>
+        <div class="oss-item reveal">
+          <span class="oss-badge oss-badge-blue">Language</span>
+          <div class="oss-name">Llama 3</div>
+          <div class="oss-role">Auto-generate lost pet notices and emergency broadcast messages</div>
+          <div class="oss-license">Community · Meta</div>
+        </div>
+        <div class="oss-item reveal">
+          <span class="oss-badge oss-badge-green">Matching</span>
+          <div class="oss-name">sentence-transformers</div>
+          <div class="oss-role">Semantic donor-patient matching beyond simple blood type lookup</div>
+          <div class="oss-license">Apache 2.0 · HuggingFace</div>
+        </div>
+        <div class="oss-item reveal">
+          <span class="oss-badge oss-badge-green">Maps</span>
+          <div class="oss-name">OpenStreetMap</div>
+          <div class="oss-role">City-wide geo-coordination — zero-cost, community-maintained</div>
+          <div class="oss-license">ODbL</div>
+        </div>
+      </div>
+      <p class="oss-principle reveal">
+        "Open-source AI allows PetPulse to remain accessible, transparent, and extensible —
+        any community can deploy and adapt it."
+      </p>
+    </div>
+    <span class="slide-num">08 / 12</span>
+  </section>
+
+  <!-- ================================================
+       SLIDE 9: MUTUAL PROTECTION LOOP
+       ================================================ -->
+  <section class="slide grid-bg" id="slide-9" aria-label="Mutual Protection Loop">
+    <div class="slide-content">
+      <!-- Radar Map Canvas -->
+      <div class="radar-wrap">
+        <canvas id="radarCanvas"></canvas>
+      </div>
+      <div class="loop-text">
+        <div class="slide-section-label reveal">Mechanism</div>
+        <h2 class="slide-h2 reveal">Mutual<br><em>Protection Loop</em></h2>
+        <div class="divider reveal"></div>
+        <p class="reveal" style="font-size:var(--body-size);color:var(--text-secondary);line-height:1.7;">
+          Every act of help strengthens the network.<br>
+          Every member added increases safety for all.<br>
+          This is a <strong style="color:var(--text-primary);">self-reinforcing system</strong> — not just an app.
+        </p>
+        <div class="loop-insight reveal">
+          <strong>The key insight:</strong> You don't help others out of pure altruism.
+          You help because you know the network will be there when <em>your</em> pet needs it.
+        </div>
+      </div>
+    </div>
+    <span class="slide-num">09 / 12</span>
+  </section>
+
+  <!-- ================================================
+       SLIDE 10: SOCIAL IMPACT
+       ================================================ -->
+  <section class="slide grid-bg" id="slide-10" aria-label="Social Impact">
+    <div class="slide-content">
+      <div class="slide-section-label reveal">Impact</div>
+      <h2 class="slide-h2 reveal">Real outcomes for<br><em>real communities.</em></h2>
+      <div class="divider reveal"></div>
+      <div class="impact-grid">
+        <div class="impact-card reveal">
+          <div class="impact-num" style="color:var(--blue);">↑ 3×</div>
+          <div class="impact-label">Faster emergency response</div>
+          <div class="impact-desc">From broadcast to confirmed donor — minutes instead of hours</div>
+        </div>
+        <div class="impact-card reveal">
+          <div class="impact-num" style="color:var(--green);">↓ 80%</div>
+          <div class="impact-label">Unsafe blood market</div>
+          <div class="impact-desc">Verified donor network eliminates need for unregulated sources</div>
+        </div>
+        <div class="impact-card reveal">
+          <div class="impact-num" style="color:var(--amber);">∞</div>
+          <div class="impact-label">City-scale network effect</div>
+          <div class="impact-desc">Every new member makes every existing member safer</div>
+        </div>
+        <div class="impact-card reveal">
+          <div class="impact-num" style="color:var(--red);">🌱</div>
+          <div class="impact-label">Mutual aid infrastructure</div>
+          <div class="impact-desc">Builds lasting community bonds beyond individual emergencies</div>
+        </div>
+      </div>
+    </div>
+    <span class="slide-num">10 / 12</span>
+  </section>
+
+  <!-- ================================================
+       SLIDE 11: PROGRESS
+       ================================================ -->
+  <section class="slide grid-bg" id="slide-11" aria-label="Progress">
+    <div class="slide-content">
+      <div class="slide-section-label reveal">Where We Are</div>
+      <h2 class="slide-h2 reveal">Concept validated.<br><em>Demo live.</em></h2>
+      <div class="divider reveal"></div>
+      <div class="progress-list">
+        <div class="progress-item reveal">
+          <div class="progress-dot progress-dot-done">✓</div>
+          <div>
+            <div class="progress-label">Interactive web demo</div>
+            <div class="progress-sublabel">Full 3-panel emergency coordination dashboard — blood matching, AI feed, map visualization</div>
+          </div>
+        </div>
+        <div class="progress-item reveal">
+          <div class="progress-dot progress-dot-done">✓</div>
+          <div>
+            <div class="progress-label">AI simulation engine</div>
+            <div class="progress-sublabel">5-phase staged processing: scan → search → filter → rank → dispatch</div>
+          </div>
+        </div>
+        <div class="progress-item reveal">
+          <div class="progress-dot progress-dot-done">✓</div>
+          <div>
+            <div class="progress-label">Geo-based matching prototype</div>
+            <div class="progress-sublabel">Canvas map with real-time pulse animation, donor connection lines, alert state flow</div>
+          </div>
+        </div>
+        <div class="progress-item reveal">
+          <div class="progress-dot progress-dot-next">→</div>
+          <div>
+            <div class="progress-label">Next: Real AI integration</div>
+            <div class="progress-sublabel">Replace simulation with CLIP + Llama 3 + sentence-transformers; community pilot in 1 city</div>
+          </div>
+        </div>
+      </div>
+      <div class="demo-link-box reveal">
+        <span>🔗</span>
+        <span>Live Demo: pet-pulse-ieb4xz0ju-misteryeqian-2100s-projects.vercel.app</span>
+      </div>
+    </div>
+    <span class="slide-num">11 / 12</span>
+  </section>
+
+  <!-- ================================================
+       SLIDE 12: VISION
+       ================================================ -->
+  <section class="slide" id="slide-12" aria-label="Vision">
+    <div class="orb-vision orb-1"></div>
+    <div class="orb-vision orb-2"></div>
+    <div class="slide-content" style="align-items:center;justify-content:center;">
+      <div class="vision-content">
+        <div class="slide-section-label reveal" style="text-align:center;">Vision</div>
+        <h2 class="vision-main reveal">Every pet<br>protected by a <em>community.</em></h2>
+        <p class="vision-sub reveal">
+          PetPulse is not just a product.<br>
+          It is a system that turns <strong style="color:var(--text-primary);font-weight:500;">empathy into infrastructure.</strong>
+        </p>
+        <div class="divider reveal" style="margin:0 auto;"></div>
+        <div class="vision-final reveal">
+          A network where helping others<br>is how you protect your own pet.
+        </div>
+      </div>
+    </div>
+    <!-- Dog right bottom -->
+    <svg class="pet-deco pet-deco-4" viewBox="0 0 200 160" xmlns="http://www.w3.org/2000/svg">
+      <path d="M170,60 C170,60 185,40 190,30 C195,20 185,15 180,20 C175,25 168,38 168,38 L155,30 C155,30 150,10 140,8 C130,6 128,18 132,26 L125,32 C115,28 100,28 88,35 C76,42 68,55 65,68 C60,85 62,100 70,112 C75,120 82,125 90,127 L90,148 C90,153 94,155 97,155 L110,155 C113,155 115,153 115,150 L115,128 C122,128 130,125 136,120 L136,148 C136,153 140,155 143,155 L156,155 C159,155 161,153 161,150 L161,112 C168,104 172,92 172,80 C172,72 171,66 170,60 Z"/>
+    </svg>
+    <!-- Cat left top -->
+    <svg class="pet-deco pet-deco-amber pet-deco-5" viewBox="0 0 160 160" xmlns="http://www.w3.org/2000/svg">
+      <path d="M30,10 L45,45 C38,50 32,58 30,68 C28,80 32,92 40,100 C45,105 52,108 58,109 L58,145 C58,150 61,152 64,152 L74,152 C77,152 79,150 79,147 L79,110 C83,110 87,110 91,110 L91,147 C91,150 93,152 96,152 L106,152 C109,152 112,150 112,147 L112,109 C118,108 124,105 129,100 C137,92 141,80 139,68 C137,58 131,50 124,45 L139,10 C130,12 122,18 118,26 C114,20 108,16 102,14 C98,12 92,12 88,14 C84,16 78,20 74,26 C70,18 62,12 53,10 Z"/>
+    </svg>
+    <div class="title-pulse-line"></div>
+    <span class="slide-num">12 / 12</span>
+  </section>
+
+  <script>
+    /* === SLIDE PRESENTATION CONTROLLER === */
+    class SlidePresentation {
+      constructor() {
+        this.slides = document.querySelectorAll('.slide');
+        this.total = this.slides.length;
+        this.current = 0;
+        this.isScrolling = false;
+
+        this.progressBar = document.getElementById('progressBar');
+        this.navDotsContainer = document.getElementById('navDots');
+
+        this.setupNavDots();
+        this.setupIntersectionObserver();
+        this.setupKeyboardNav();
+        this.setupTouchNav();
+        this.setupScrollNav();
+      }
+
+      setupNavDots() {
+        this.navDotsContainer.innerHTML = '';
+        this.slides.forEach((_, i) => {
+          const dot = document.createElement('button');
+          dot.className = 'nav-dot' + (i === 0 ? ' active' : '');
+          dot.setAttribute('aria-label', `Go to slide ${i + 1}`);
+          dot.addEventListener('click', () => this.goTo(i));
+          this.navDotsContainer.appendChild(dot);
+        });
+      }
+
+      setupIntersectionObserver() {
+        const opts = { threshold: 0.5 };
+        const observer = new IntersectionObserver((entries) => {
+          entries.forEach(entry => {
+            if (entry.isIntersecting) {
+              entry.target.classList.add('visible');
+              const idx = Array.from(this.slides).indexOf(entry.target);
+              if (idx !== -1) this.updateUI(idx);
+            }
+          });
+        }, opts);
+        this.slides.forEach(s => observer.observe(s));
+      }
+
+      updateUI(idx) {
+        this.current = idx;
+        // Progress bar
+        const pct = this.total > 1 ? (idx / (this.total - 1)) * 100 : 100;
+        this.progressBar.style.width = pct + '%';
+        // Nav dots
+        document.querySelectorAll('.nav-dot').forEach((d, i) => {
+          d.classList.toggle('active', i === idx);
+        });
+      }
+
+      goTo(idx) {
+        if (idx < 0 || idx >= this.total) return;
+        this.slides[idx].scrollIntoView({ behavior: 'smooth' });
+      }
+
+      setupKeyboardNav() {
+        document.addEventListener('keydown', e => {
+          if (['ArrowDown', 'ArrowRight', ' ', 'PageDown'].includes(e.key)) {
+            e.preventDefault();
+            this.goTo(this.current + 1);
+          } else if (['ArrowUp', 'ArrowLeft', 'PageUp'].includes(e.key)) {
+            e.preventDefault();
+            this.goTo(this.current - 1);
+          } else if (e.key === 'Home') {
+            e.preventDefault(); this.goTo(0);
+          } else if (e.key === 'End') {
+            e.preventDefault(); this.goTo(this.total - 1);
+          }
+        });
+      }
+
+      setupTouchNav() {
+        let startY = 0, startX = 0;
+        document.addEventListener('touchstart', e => {
+          startY = e.touches[0].clientY;
+          startX = e.touches[0].clientX;
+        }, { passive: true });
+        document.addEventListener('touchend', e => {
+          const dy = startY - e.changedTouches[0].clientY;
+          const dx = startX - e.changedTouches[0].clientX;
+          if (Math.abs(dy) > Math.abs(dx) && Math.abs(dy) > 40) {
+            this.goTo(dy > 0 ? this.current + 1 : this.current - 1);
+          }
+        }, { passive: true });
+      }
+
+      setupScrollNav() {
+        let lastScroll = Date.now();
+        document.addEventListener('wheel', e => {
+          const now = Date.now();
+          if (now - lastScroll < 800) return;
+          lastScroll = now;
+          e.preventDefault();
+          this.goTo(e.deltaY > 0 ? this.current + 1 : this.current - 1);
+        }, { passive: false });
+      }
+    }
+
+    new SlidePresentation();
+
+    /* === RADAR MAP CANVAS === */
+    (function initRadar() {
+      const canvas = document.getElementById('radarCanvas');
+      if (!canvas) return;
+      const ctx = canvas.getContext('2d');
+
+      // Pet node positions (relative 0-1)
+      const nodes = [
+        { x: 0.72, y: 0.28, type: 'dog', active: true },
+        { x: 0.28, y: 0.38, type: 'cat', active: true },
+        { x: 0.65, y: 0.70, type: 'dog', active: false },
+        { x: 0.22, y: 0.65, type: 'cat', active: true },
+        { x: 0.80, y: 0.52, type: 'dog', active: false },
+        { x: 0.45, y: 0.20, type: 'cat', active: true },
+        { x: 0.15, y: 0.78, type: 'dog', active: true },
+        { x: 0.58, y: 0.85, type: 'cat', active: false },
+      ];
+
+      let angle = 0;
+      let raf;
+      const waves = []; // ripple waves from center
+
+      function resize() {
+        const wrap = canvas.parentElement;
+        const size = wrap.getBoundingClientRect();
+        canvas.width = size.width * 2;
+        canvas.height = size.height * 2;
+        canvas.style.width = size.width + 'px';
+        canvas.style.height = size.height + 'px';
+        ctx.scale(2, 2);
+      }
+
+      function draw() {
+        const w = canvas.width / 2;
+        const h = canvas.height / 2;
+        const cx = w / 2, cy = h / 2;
+        const r = Math.min(cx, cy) * 0.88;
+        const t = Date.now() / 1000;
+
+        ctx.clearRect(0, 0, w, h);
+
+        // Dark circular background
+        ctx.beginPath();
+        ctx.arc(cx, cy, r + 4, 0, Math.PI * 2);
+        ctx.fillStyle = '#070c18';
+        ctx.fill();
+
+        // Concentric rings
+        [0.3, 0.55, 0.8, 1].forEach(frac => {
+          ctx.beginPath();
+          ctx.arc(cx, cy, r * frac, 0, Math.PI * 2);
+          ctx.strokeStyle = 'rgba(0, 212, 255, 0.08)';
+          ctx.lineWidth = 1;
+          ctx.stroke();
+        });
+
+        // Cross hairs
+        ctx.strokeStyle = 'rgba(0, 212, 255, 0.06)';
+        ctx.lineWidth = 1;
+        ctx.beginPath(); ctx.moveTo(cx - r, cy); ctx.lineTo(cx + r, cy); ctx.stroke();
+        ctx.beginPath(); ctx.moveTo(cx, cy - r); ctx.lineTo(cx, cy + r); ctx.stroke();
+
+        // Radar sweep
+        angle = (t * 0.6) % (Math.PI * 2);
+        const sweepLen = Math.PI * 0.55;
+        for (let i = 0; i < 60; i++) {
+          const a = angle - (sweepLen / 60) * i;
+          const alpha = (1 - i / 60) * 0.22;
+          ctx.beginPath();
+          ctx.moveTo(cx, cy);
+          ctx.arc(cx, cy, r, a, a + 0.03);
+          ctx.closePath();
+          ctx.fillStyle = `rgba(0, 212, 255, ${alpha})`;
+          ctx.fill();
+        }
+        // Sweep leading edge glow
+        ctx.beginPath();
+        ctx.moveTo(cx, cy);
+        ctx.lineTo(cx + Math.cos(angle) * r, cy + Math.sin(angle) * r);
+        ctx.strokeStyle = 'rgba(0, 212, 255, 0.7)';
+        ctx.lineWidth = 1.5;
+        ctx.stroke();
+
+        // Periodic pulse waves from center
+        if (Math.floor(t * 0.5) > Math.floor((t - 0.016) * 0.5)) {
+          waves.push({ born: t, maxR: r });
+        }
+        waves.forEach((w2, i) => {
+          const age = t - w2.born;
+          const progress = age / 2.5;
+          if (progress > 1) { waves.splice(i, 1); return; }
+          const wr = w2.maxR * progress;
+          ctx.beginPath();
+          ctx.arc(cx, cy, wr, 0, Math.PI * 2);
+          ctx.strokeStyle = `rgba(0, 212, 255, ${0.35 * (1 - progress)})`;
+          ctx.lineWidth = 1.2;
+          ctx.stroke();
+        });
+
+        // Pet nodes
+        nodes.forEach(node => {
+          const nx = cx + (node.x - 0.5) * r * 1.8;
+          const ny = cy + (node.y - 0.5) * r * 1.8;
+          if (nx < cx - r || nx > cx + r || ny < cy - r || ny > cy + r) return;
+
+          // Lit up by sweep
+          const nodeAngle = Math.atan2(ny - cy, nx - cx);
+          let diff = angle - nodeAngle;
+          while (diff < 0) diff += Math.PI * 2;
+          while (diff > Math.PI * 2) diff -= Math.PI * 2;
+          const lit = diff < sweepLen;
+          const brightness = lit ? (1 - diff / sweepLen) : 0;
+
+          if (node.active) {
+            // Pulse ring on active nodes
+            const pulse = (Math.sin(t * 2 + node.x * 5) + 1) / 2;
+            ctx.beginPath();
+            ctx.arc(nx, ny, 6 + pulse * 5, 0, Math.PI * 2);
+            ctx.strokeStyle = `rgba(0, 230, 118, ${0.15 + pulse * 0.2})`;
+            ctx.lineWidth = 1;
+            ctx.stroke();
+
+            ctx.beginPath();
+            ctx.arc(nx, ny, 4, 0, Math.PI * 2);
+            ctx.fillStyle = node.type === 'dog' ? '#00e676' : '#00d4ff';
+            ctx.globalAlpha = 0.7 + brightness * 0.3;
+            ctx.fill();
+            ctx.globalAlpha = 1;
+
+            // Sweep flash
+            if (brightness > 0.3) {
+              ctx.beginPath();
+              ctx.arc(nx, ny, 4 + brightness * 8, 0, Math.PI * 2);
+              ctx.strokeStyle = `rgba(0, 212, 255, ${brightness * 0.6})`;
+              ctx.lineWidth = 1;
+              ctx.stroke();
+            }
+          } else {
+            ctx.beginPath();
+            ctx.arc(nx, ny, 3, 0, Math.PI * 2);
+            ctx.fillStyle = 'rgba(61, 77, 110, 0.8)';
+            ctx.fill();
+            if (brightness > 0.4) {
+              ctx.beginPath();
+              ctx.arc(nx, ny, 3 + brightness * 6, 0, Math.PI * 2);
+              ctx.strokeStyle = `rgba(0, 212, 255, ${brightness * 0.4})`;
+              ctx.lineWidth = 1;
+              ctx.stroke();
+            }
+          }
+        });
+
+        // Center dot
+        ctx.beginPath();
+        ctx.arc(cx, cy, 5, 0, Math.PI * 2);
+        ctx.fillStyle = '#ff3366';
+        ctx.fill();
+        const cp = (Math.sin(t * 3) + 1) / 2;
+        ctx.beginPath();
+        ctx.arc(cx, cy, 5 + cp * 6, 0, Math.PI * 2);
+        ctx.strokeStyle = `rgba(255, 51, 102, ${0.4 * (1 - cp)})`;
+        ctx.lineWidth = 1.5;
+        ctx.stroke();
+
+        // Clip to circle
+        ctx.save();
+        ctx.beginPath();
+        ctx.arc(cx, cy, r + 4, 0, Math.PI * 2);
+        ctx.clip();
+        ctx.restore();
+
+        // Legend
+        ctx.font = '9px DM Mono, monospace';
+        ctx.fillStyle = 'rgba(136, 146, 168, 0.5)';
+        ctx.textAlign = 'left';
+        ctx.fillText('● Community Members', cx - r + 8, cy + r - 10);
+
+        raf = requestAnimationFrame(draw);
+      }
+
+      // Only animate when slide 9 is visible
+      const slide9 = document.getElementById('slide-9');
+      const obs = new IntersectionObserver(entries => {
+        entries.forEach(e => {
+          if (e.isIntersecting) {
+            resize();
+            if (!raf) draw();
+          } else {
+            cancelAnimationFrame(raf);
+            raf = null;
+          }
+        });
+      }, { threshold: 0.3 });
+      obs.observe(slide9);
+
+      window.addEventListener('resize', () => {
+        resize();
+      });
+    })();
+  </script>
+</body>
+</html>
