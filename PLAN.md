@@ -173,38 +173,16 @@ No backend. No real AI API calls. All simulation is client-side with timed seque
 
 ---
 
-## 8. Presentation Assets (Derived from Demo)
-
-This plan and demo serve multiple outputs:
-
-| Output | Source |
-|--------|--------|
-| **Live Demo** | The web application itself |
-| **PPT / Slides** | Screenshots + flow diagrams from this plan |
-| **Pitch Script** | Section 2 (Problem) → Section 3 (Solution) → Live demo |
-| **Exhibition Poster** | Tagline + UI screenshot + Mutual Protection Loop diagram |
-
-### Suggested Pitch Structure (3 min)
-
-1. **Hook** (15s): "Every year, millions of pets go missing. Thousands need emergency blood. The people who could help are nearby — they just can't connect."
-2. **Problem** (30s): Information gap, not empathy gap
-3. **Solution** (30s): PetPulse — AI-powered mutual aid network
-4. **Live Demo** (60s): Walk through the Medical Emergency flow
-5. **Mechanism** (30s): Mutual Protection Loop — helping others protects your own pet
-6. **Close** (15s): "PetPulse turns empathy into infrastructure."
-
----
-
-## 9. Social Value
+## 8. Social Value
 
 - Improve pet emergency survival rates
-- Reduce unsafe/illegal blood sources
+- **Reduce reliance on black-market blood sources** — community-verified donors provide trusted, traceable blood supply, replacing unregulated and potentially unsafe channels
 - Advance animal welfare
 - Build mutual aid social structures
 
 ---
 
-## 10. Project Essence
+## 9. Project Essence
 
 > PetPulse is not just a product.
 > It is a system that **turns empathy into infrastructure**.
