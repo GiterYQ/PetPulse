@@ -1,0 +1,1692 @@
+openapi: 3.1.0
+info:
+  title: PetPulse MVP API
+  version: 0.1.0
+  summary: PetPulse 宠物急救互助 MVP API 契约草案
+  description: >
+    PetPulse MVP API 覆盖账号、宠物档案、求助、匹配、提醒、响应、媒体和基础后台。
+    本契约用于前后端和移动端对齐，不代表已实现的生产接口。
+servers:
+  - url: http://localhost:3000/v1
+    description: 本地开发占位
+  - url: https://api.petpulse.example/v1
+    description: 生产环境占位
+tags:
+  - name: Config
+    description: 启动配置、地区策略和功能开关
+  - name: Auth
+    description: 会话和当前用户
+  - name: Devices
+    description: 设备和通知 token
+  - name: Pets
+    description: 宠物档案
+  - name: Emergencies
+    description: 急救和走失求助
+  - name: Matching
+    description: 匹配候选
+  - name: Alerts
+    description: 提醒发送和查看
+  - name: Responses
+    description: 帮助者响应
+  - name: Media
+    description: 媒体上传和对象存储元数据
+  - name: Admin
+    description: 最小后台能力
+security:
+  - bearerAuth: []
+paths:
+  /config/bootstrap:
+    get:
+      tags: [Config]
+      summary: 获取启动配置
+      description: 返回地区策略、Provider、功能开关和本地化资源版本。
+      operationId: getBootstrapConfig
+      security: []
+      parameters:
+        - $ref: "#/components/parameters/Platform"
+        - $ref: "#/components/parameters/AppVersion"
+        - $ref: "#/components/parameters/Locale"
+        - $ref: "#/components/parameters/Region"
+      responses:
+        "200":
+          description: 启动配置
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/BootstrapConfigResponse"
+        default:
+          $ref: "#/components/responses/ErrorResponse"
+
+  /auth/session:
+    post:
+      tags: [Auth]
+      summary: 创建或恢复会话
+      description: MVP 可使用 mock provider，正式版本再替换为邮箱、手机号、Apple、Google 或微信等登录方式。
+      operationId: createSession
+      security: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateSessionRequest"
+      responses:
+        "201":
+          description: 会话已创建
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SessionResponse"
+        default:
+          $ref: "#/components/responses/ErrorResponse"
+
+  /me:
+    get:
+      tags: [Auth]
+      summary: 获取当前用户
+      operationId: getCurrentUser
+      responses:
+        "200":
+          description: 当前用户
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/UserResponse"
+        default:
+          $ref: "#/components/responses/ErrorResponse"
+    patch:
+      tags: [Auth]
+      summary: 更新当前用户
+      operationId: updateCurrentUser
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpdateUserRequest"
+      responses:
+        "200":
+          description: 用户已更新
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/UserResponse"
+        default:
+          $ref: "#/components/responses/ErrorResponse"
+    delete:
+      tags: [Auth]
+      summary: 删除账号或发起删除流程
+      operationId: deleteCurrentUser
+      responses:
+        "204":
+          description: 删除流程已处理
+        default:
+          $ref: "#/components/responses/ErrorResponse"
+
+  /devices:
+    post:
+      tags: [Devices]
+      summary: 注册设备 token
+      operationId: registerDevice
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/RegisterDeviceRequest"
+      responses:
+        "201":
+          description: 设备已注册
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/DeviceTokenResponse"
+        default:
+          $ref: "#/components/responses/ErrorResponse"
+
+  /devices/{deviceId}:
+    delete:
+      tags: [Devices]
+      summary: 注销设备 token
+      operationId: deleteDevice
+      parameters:
+        - $ref: "#/components/parameters/DeviceId"
+      responses:
+        "204":
+          description: 设备已注销
+        default:
+          $ref: "#/components/responses/ErrorResponse"
+
+  /pets:
+    get:
+      tags: [Pets]
+      summary: 获取我的宠物列表
+      operationId: listPets
+      parameters:
+        - $ref: "#/components/parameters/Cursor"
+        - $ref: "#/components/parameters/Limit"
+      responses:
+        "200":
+          description: 宠物列表
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/PetListResponse"
+        default:
+          $ref: "#/components/responses/ErrorResponse"
+    post:
+      tags: [Pets]
+      summary: 创建宠物
+      operationId: createPet
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreatePetRequest"
+      responses:
+        "201":
+          description: 宠物已创建
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/PetResponse"
+        default:
+          $ref: "#/components/responses/ErrorResponse"
+
+  /pets/{petId}:
+    get:
+      tags: [Pets]
+      summary: 获取宠物详情
+      operationId: getPet
+      parameters:
+        - $ref: "#/components/parameters/PetId"
+      responses:
+        "200":
+          description: 宠物详情
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/PetResponse"
+        default:
+          $ref: "#/components/responses/ErrorResponse"
+    patch:
+      tags: [Pets]
+      summary: 更新宠物
+      operationId: updatePet
+      parameters:
+        - $ref: "#/components/parameters/PetId"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpdatePetRequest"
+      responses:
+        "200":
+          description: 宠物已更新
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/PetResponse"
+        default:
+          $ref: "#/components/responses/ErrorResponse"
+    delete:
+      tags: [Pets]
+      summary: 删除宠物
+      operationId: deletePet
+      parameters:
+        - $ref: "#/components/parameters/PetId"
+      responses:
+        "204":
+          description: 宠物已删除
+        default:
+          $ref: "#/components/responses/ErrorResponse"
+
+  /emergencies:
+    get:
+      tags: [Emergencies]
+      summary: 获取我的求助列表
+      operationId: listEmergencies
+      parameters:
+        - $ref: "#/components/parameters/Cursor"
+        - $ref: "#/components/parameters/Limit"
+        - name: status
+          in: query
+          required: false
+          schema:
+            $ref: "#/components/schemas/EmergencyStatus"
+      responses:
+        "200":
+          description: 求助列表
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/EmergencyListResponse"
+        default:
+          $ref: "#/components/responses/ErrorResponse"
+    post:
+      tags: [Emergencies]
+      summary: 创建求助草稿或直接提交
+      operationId: createEmergency
+      parameters:
+        - $ref: "#/components/parameters/IdempotencyKey"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateEmergencyRequest"
+      responses:
+        "201":
+          description: 求助已创建
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/EmergencyResponse"
+        default:
+          $ref: "#/components/responses/ErrorResponse"
+
+  /emergencies/{emergencyId}:
+    get:
+      tags: [Emergencies]
+      summary: 获取求助详情
+      operationId: getEmergency
+      parameters:
+        - $ref: "#/components/parameters/EmergencyId"
+      responses:
+        "200":
+          description: 求助详情
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/EmergencyResponse"
+        default:
+          $ref: "#/components/responses/ErrorResponse"
+    patch:
+      tags: [Emergencies]
+      summary: 更新求助草稿或允许修改字段
+      operationId: updateEmergency
+      parameters:
+        - $ref: "#/components/parameters/EmergencyId"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpdateEmergencyRequest"
+      responses:
+        "200":
+          description: 求助已更新
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/EmergencyResponse"
+        default:
+          $ref: "#/components/responses/ErrorResponse"
+
+  /emergencies/{emergencyId}/submit:
+    post:
+      tags: [Emergencies]
+      summary: 提交求助并进入匹配
+      operationId: submitEmergency
+      parameters:
+        - $ref: "#/components/parameters/EmergencyId"
+        - $ref: "#/components/parameters/IdempotencyKey"
+      responses:
+        "200":
+          description: 求助已提交
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/EmergencyResponse"
+        default:
+          $ref: "#/components/responses/ErrorResponse"
+
+  /emergencies/{emergencyId}/close:
+    post:
+      tags: [Emergencies]
+      summary: 关闭或标记求助已解决
+      operationId: closeEmergency
+      parameters:
+        - $ref: "#/components/parameters/EmergencyId"
+        - $ref: "#/components/parameters/IdempotencyKey"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CloseEmergencyRequest"
+      responses:
+        "200":
+          description: 求助已关闭
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/EmergencyResponse"
+        default:
+          $ref: "#/components/responses/ErrorResponse"
+
+  /emergencies/{emergencyId}/matches:
+    get:
+      tags: [Matching]
+      summary: 获取求助匹配候选
+      operationId: listEmergencyMatches
+      parameters:
+        - $ref: "#/components/parameters/EmergencyId"
+      responses:
+        "200":
+          description: 匹配候选列表
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MatchCandidateListResponse"
+        default:
+          $ref: "#/components/responses/ErrorResponse"
+
+  /emergencies/{emergencyId}/rematch:
+    post:
+      tags: [Matching]
+      summary: 重新匹配候选
+      description: MVP 可后置，当前先保留契约占位。
+      operationId: rematchEmergency
+      parameters:
+        - $ref: "#/components/parameters/EmergencyId"
+        - $ref: "#/components/parameters/IdempotencyKey"
+      responses:
+        "202":
+          description: 重新匹配已接受
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/JobAcceptedResponse"
+        default:
+          $ref: "#/components/responses/ErrorResponse"
+
+  /emergencies/{emergencyId}/alerts:
+    get:
+      tags: [Alerts]
+      summary: 查看求助提醒发送记录
+      operationId: listEmergencyAlerts
+      parameters:
+        - $ref: "#/components/parameters/EmergencyId"
+        - $ref: "#/components/parameters/Cursor"
+        - $ref: "#/components/parameters/Limit"
+      responses:
+        "200":
+          description: 提醒发送记录
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AlertDeliveryListResponse"
+        default:
+          $ref: "#/components/responses/ErrorResponse"
+    post:
+      tags: [Alerts]
+      summary: 向选定候选发送提醒
+      operationId: createEmergencyAlerts
+      parameters:
+        - $ref: "#/components/parameters/EmergencyId"
+        - $ref: "#/components/parameters/IdempotencyKey"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateAlertsRequest"
+      responses:
+        "201":
+          description: 提醒已创建
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AlertDeliveryListResponse"
+        default:
+          $ref: "#/components/responses/ErrorResponse"
+
+  /alerts/{alertId}/view:
+    post:
+      tags: [Alerts]
+      summary: 标记提醒已查看
+      operationId: markAlertViewed
+      parameters:
+        - $ref: "#/components/parameters/AlertId"
+        - $ref: "#/components/parameters/IdempotencyKey"
+      responses:
+        "200":
+          description: 提醒已查看
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AlertDeliveryResponse"
+        default:
+          $ref: "#/components/responses/ErrorResponse"
+
+  /alerts/{alertId}/responses:
+    post:
+      tags: [Responses]
+      summary: 提交响应
+      operationId: createAlertResponse
+      parameters:
+        - $ref: "#/components/parameters/AlertId"
+        - $ref: "#/components/parameters/IdempotencyKey"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateResponseRequest"
+      responses:
+        "201":
+          description: 响应已创建
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ResponseResponse"
+        default:
+          $ref: "#/components/responses/ErrorResponse"
+
+  /emergencies/{emergencyId}/responses:
+    get:
+      tags: [Responses]
+      summary: 查看求助响应
+      operationId: listEmergencyResponses
+      parameters:
+        - $ref: "#/components/parameters/EmergencyId"
+        - $ref: "#/components/parameters/Cursor"
+        - $ref: "#/components/parameters/Limit"
+      responses:
+        "200":
+          description: 求助响应列表
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ResponseListResponse"
+        default:
+          $ref: "#/components/responses/ErrorResponse"
+
+  /media/presign:
+    post:
+      tags: [Media]
+      summary: 获取媒体上传 URL
+      operationId: createMediaPresign
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateMediaPresignRequest"
+      responses:
+        "201":
+          description: 上传 URL 已创建
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MediaPresignResponse"
+        default:
+          $ref: "#/components/responses/ErrorResponse"
+
+  /media/{mediaId}/complete:
+    post:
+      tags: [Media]
+      summary: 标记媒体上传完成
+      operationId: completeMediaUpload
+      parameters:
+        - $ref: "#/components/parameters/MediaId"
+        - $ref: "#/components/parameters/IdempotencyKey"
+      responses:
+        "200":
+          description: 媒体已激活
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MediaAssetResponse"
+        default:
+          $ref: "#/components/responses/ErrorResponse"
+
+  /media/{mediaId}:
+    delete:
+      tags: [Media]
+      summary: 删除媒体
+      operationId: deleteMedia
+      parameters:
+        - $ref: "#/components/parameters/MediaId"
+      responses:
+        "204":
+          description: 媒体已删除
+        default:
+          $ref: "#/components/responses/ErrorResponse"
+
+  /admin/emergencies:
+    get:
+      tags: [Admin]
+      summary: 后台求助列表
+      operationId: adminListEmergencies
+      parameters:
+        - $ref: "#/components/parameters/Cursor"
+        - $ref: "#/components/parameters/Limit"
+        - name: status
+          in: query
+          required: false
+          schema:
+            $ref: "#/components/schemas/EmergencyStatus"
+      responses:
+        "200":
+          description: 后台求助列表
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/EmergencyListResponse"
+        default:
+          $ref: "#/components/responses/ErrorResponse"
+
+  /admin/emergencies/{emergencyId}:
+    get:
+      tags: [Admin]
+      summary: 后台求助详情
+      operationId: adminGetEmergency
+      parameters:
+        - $ref: "#/components/parameters/EmergencyId"
+      responses:
+        "200":
+          description: 后台求助详情
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/EmergencyResponse"
+        default:
+          $ref: "#/components/responses/ErrorResponse"
+
+  /admin/emergencies/{emergencyId}/hide:
+    post:
+      tags: [Admin]
+      summary: 隐藏求助
+      operationId: adminHideEmergency
+      parameters:
+        - $ref: "#/components/parameters/EmergencyId"
+        - $ref: "#/components/parameters/IdempotencyKey"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/AdminActionRequest"
+      responses:
+        "200":
+          description: 求助已隐藏
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AdminActionResponse"
+        default:
+          $ref: "#/components/responses/ErrorResponse"
+
+  /admin/emergencies/{emergencyId}/restore:
+    post:
+      tags: [Admin]
+      summary: 恢复求助
+      operationId: adminRestoreEmergency
+      parameters:
+        - $ref: "#/components/parameters/EmergencyId"
+        - $ref: "#/components/parameters/IdempotencyKey"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/AdminActionRequest"
+      responses:
+        "200":
+          description: 求助已恢复
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AdminActionResponse"
+        default:
+          $ref: "#/components/responses/ErrorResponse"
+
+  /admin/metrics:
+    get:
+      tags: [Admin]
+      summary: 获取聚合运营指标
+      operationId: adminGetMetrics
+      responses:
+        "200":
+          description: 聚合运营指标
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AdminMetricsResponse"
+        default:
+          $ref: "#/components/responses/ErrorResponse"
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+
+  parameters:
+    Platform:
+      name: platform
+      in: query
+      required: false
+      schema:
+        $ref: "#/components/schemas/Platform"
+    AppVersion:
+      name: appVersion
+      in: query
+      required: false
+      schema:
+        type: string
+        example: "0.1.0"
+    Locale:
+      name: locale
+      in: query
+      required: false
+      schema:
+        type: string
+        example: zh-CN
+    Region:
+      name: region
+      in: query
+      required: false
+      schema:
+        type: string
+        example: CN
+    Cursor:
+      name: cursor
+      in: query
+      required: false
+      schema:
+        type: string
+    Limit:
+      name: limit
+      in: query
+      required: false
+      schema:
+        type: integer
+        minimum: 1
+        maximum: 100
+        default: 20
+    IdempotencyKey:
+      name: Idempotency-Key
+      in: header
+      required: false
+      schema:
+        type: string
+        minLength: 8
+        maxLength: 128
+    PetId:
+      name: petId
+      in: path
+      required: true
+      schema:
+        type: string
+    EmergencyId:
+      name: emergencyId
+      in: path
+      required: true
+      schema:
+        type: string
+    AlertId:
+      name: alertId
+      in: path
+      required: true
+      schema:
+        type: string
+    DeviceId:
+      name: deviceId
+      in: path
+      required: true
+      schema:
+        type: string
+    MediaId:
+      name: mediaId
+      in: path
+      required: true
+      schema:
+        type: string
+
+  responses:
+    ErrorResponse:
+      description: 统一错误响应
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/ErrorEnvelope"
+
+  schemas:
+    ApiEnvelope:
+      type: object
+      required: [meta]
+      properties:
+        meta:
+          $ref: "#/components/schemas/ResponseMeta"
+    ResponseMeta:
+      type: object
+      required: [requestId]
+      properties:
+        requestId:
+          type: string
+          example: req_01HX0000000000000000000000
+        timestamp:
+          type: string
+          format: date-time
+    Pagination:
+      type: object
+      required: [hasMore]
+      properties:
+        nextCursor:
+          type: string
+        hasMore:
+          type: boolean
+    ErrorEnvelope:
+      type: object
+      required: [error]
+      properties:
+        error:
+          $ref: "#/components/schemas/ApiError"
+    ApiError:
+      type: object
+      required: [code, message, requestId]
+      properties:
+        code:
+          $ref: "#/components/schemas/ErrorCode"
+        message:
+          type: string
+        requestId:
+          type: string
+        details:
+          type: array
+          items:
+            $ref: "#/components/schemas/ErrorDetail"
+    ErrorDetail:
+      type: object
+      required: [field, reason]
+      properties:
+        field:
+          type: string
+        reason:
+          type: string
+    ErrorCode:
+      type: string
+      enum:
+        - UNAUTHENTICATED
+        - FORBIDDEN
+        - VALIDATION_ERROR
+        - NOT_FOUND
+        - FEATURE_DISABLED
+        - REGION_UNSUPPORTED
+        - RATE_LIMITED
+        - PROVIDER_ERROR
+        - CONFLICT
+
+    Platform:
+      type: string
+      enum: [ios, android, web]
+    AuthProvider:
+      type: string
+      enum: [mock, email, phone, apple, google, wechat]
+    UserStatus:
+      type: string
+      enum: [active, disabled, deleted]
+    PetType:
+      type: string
+      enum: [dog, cat, other]
+    PetStatus:
+      type: string
+      enum: [active, deleted]
+    EmergencyType:
+      type: string
+      enum: [medical_emergency, lost_pet]
+    EmergencyStatus:
+      type: string
+      enum: [draft, submitted, matching, alerting, active, resolved, closed, hidden]
+    EmergencyUrgency:
+      type: string
+      enum: [low, medium, high, critical]
+    ContactPreference:
+      type: string
+      enum: [in_app, masked_phone, manual]
+    CloseReason:
+      type: string
+      enum: [resolved, offline, user_closed, admin_hidden]
+    CandidateType:
+      type: string
+      enum: [user, pet, hospital, volunteer, manual]
+    MatchCandidateStatus:
+      type: string
+      enum: [suggested, selected, alerted, dismissed]
+    AlertChannel:
+      type: string
+      enum: [push, sms, email, in_app, mock]
+    AlertStatus:
+      type: string
+      enum: [pending, sent, viewed, responded, declined, expired, failed]
+    ResponseType:
+      type: string
+      enum: [can_help, lead, decline, report]
+    ResponseStatus:
+      type: string
+      enum: [submitted, withdrawn, hidden]
+    MediaPurpose:
+      type: string
+      enum: [pet_photo, emergency_photo, proof, avatar]
+    MediaVisibility:
+      type: string
+      enum: [private, limited, public]
+    MediaStatus:
+      type: string
+      enum: [pending, active, deleted]
+    AdminTargetType:
+      type: string
+      enum: [user, pet, emergency, response, media]
+    AdminActionType:
+      type: string
+      enum: [hide, restore, close, note]
+
+    BootstrapConfigResponse:
+      allOf:
+        - $ref: "#/components/schemas/ApiEnvelope"
+        - type: object
+          required: [data]
+          properties:
+            data:
+              type: object
+              required: [regionPolicy, featureFlags, localizationVersion]
+              properties:
+                regionPolicy:
+                  $ref: "#/components/schemas/RegionPolicy"
+                featureFlags:
+                  type: array
+                  items:
+                    $ref: "#/components/schemas/FeatureFlag"
+                localizationVersion:
+                  type: string
+                  example: "2026-06-15"
+    RegionPolicy:
+      type: object
+      required: [region, countryCode, mapProvider, notificationProvider, authProviders, storageRegion]
+      properties:
+        region:
+          type: string
+          example: CN
+        countryCode:
+          type: string
+          example: CN
+        mapProvider:
+          type: string
+          example: mock
+        notificationProvider:
+          type: string
+          example: mock
+        authProviders:
+          type: array
+          items:
+            $ref: "#/components/schemas/AuthProvider"
+        storageRegion:
+          type: string
+          example: cn-east-placeholder
+        privacyTextVersion:
+          type: string
+          example: "2026-06-15"
+    FeatureFlag:
+      type: object
+      required: [key, enabled]
+      properties:
+        key:
+          type: string
+          example: ai.draftEmergency
+        region:
+          type: string
+          example: CN
+        platform:
+          $ref: "#/components/schemas/Platform"
+        enabled:
+          type: boolean
+        rolloutPercent:
+          type: integer
+          minimum: 0
+          maximum: 100
+        description:
+          type: string
+
+    CreateSessionRequest:
+      type: object
+      required: [authProvider, locale, region, timeZone]
+      properties:
+        authProvider:
+          $ref: "#/components/schemas/AuthProvider"
+        providerToken:
+          type: string
+          description: 第三方登录 token，mock provider 可不传。
+        displayName:
+          type: string
+        locale:
+          type: string
+          example: zh-CN
+        region:
+          type: string
+          example: CN
+        countryCode:
+          type: string
+          example: CN
+        timeZone:
+          type: string
+          example: Asia/Shanghai
+    SessionResponse:
+      allOf:
+        - $ref: "#/components/schemas/ApiEnvelope"
+        - type: object
+          required: [data]
+          properties:
+            data:
+              type: object
+              required: [accessToken, user]
+              properties:
+                accessToken:
+                  type: string
+                user:
+                  $ref: "#/components/schemas/User"
+    UserResponse:
+      allOf:
+        - $ref: "#/components/schemas/ApiEnvelope"
+        - type: object
+          required: [data]
+          properties:
+            data:
+              $ref: "#/components/schemas/User"
+    User:
+      type: object
+      required: [id, displayName, authProvider, locale, region, timeZone, notificationOptIn, status, createdAt, updatedAt]
+      properties:
+        id:
+          type: string
+        displayName:
+          type: string
+        avatarMediaId:
+          type: string
+        email:
+          type: string
+        phone:
+          type: string
+        authProvider:
+          $ref: "#/components/schemas/AuthProvider"
+        locale:
+          type: string
+        region:
+          type: string
+        countryCode:
+          type: string
+        timeZone:
+          type: string
+        notificationOptIn:
+          type: boolean
+        status:
+          $ref: "#/components/schemas/UserStatus"
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+    UpdateUserRequest:
+      type: object
+      properties:
+        displayName:
+          type: string
+        avatarMediaId:
+          type: string
+        locale:
+          type: string
+        region:
+          type: string
+        countryCode:
+          type: string
+        timeZone:
+          type: string
+        notificationOptIn:
+          type: boolean
+
+    RegisterDeviceRequest:
+      type: object
+      required: [platform, provider, token, appVersion]
+      properties:
+        platform:
+          $ref: "#/components/schemas/Platform"
+        provider:
+          type: string
+          enum: [apns, fcm, vendor, mock]
+        token:
+          type: string
+        appVersion:
+          type: string
+        locale:
+          type: string
+    DeviceTokenResponse:
+      allOf:
+        - $ref: "#/components/schemas/ApiEnvelope"
+        - type: object
+          required: [data]
+          properties:
+            data:
+              $ref: "#/components/schemas/DeviceToken"
+    DeviceToken:
+      type: object
+      required: [id, userId, platform, provider, appVersion, status, createdAt, updatedAt]
+      properties:
+        id:
+          type: string
+        userId:
+          type: string
+        platform:
+          $ref: "#/components/schemas/Platform"
+        provider:
+          type: string
+        appVersion:
+          type: string
+        locale:
+          type: string
+        status:
+          type: string
+          enum: [active, revoked, expired]
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+
+    PetListResponse:
+      allOf:
+        - $ref: "#/components/schemas/ApiEnvelope"
+        - type: object
+          required: [data, pagination]
+          properties:
+            data:
+              type: array
+              items:
+                $ref: "#/components/schemas/Pet"
+            pagination:
+              $ref: "#/components/schemas/Pagination"
+    PetResponse:
+      allOf:
+        - $ref: "#/components/schemas/ApiEnvelope"
+        - type: object
+          required: [data]
+          properties:
+            data:
+              $ref: "#/components/schemas/Pet"
+    Pet:
+      type: object
+      required: [id, ownerUserId, name, type, status, createdAt, updatedAt]
+      properties:
+        id:
+          type: string
+        ownerUserId:
+          type: string
+        name:
+          type: string
+        type:
+          $ref: "#/components/schemas/PetType"
+        photoMediaId:
+          type: string
+        birthDate:
+          type: string
+          format: date
+        ageText:
+          type: string
+        weightKg:
+          type: number
+        notes:
+          type: string
+        status:
+          $ref: "#/components/schemas/PetStatus"
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+    CreatePetRequest:
+      type: object
+      required: [name, type]
+      properties:
+        name:
+          type: string
+        type:
+          $ref: "#/components/schemas/PetType"
+        photoMediaId:
+          type: string
+        birthDate:
+          type: string
+          format: date
+        ageText:
+          type: string
+        weightKg:
+          type: number
+        notes:
+          type: string
+    UpdatePetRequest:
+      type: object
+      properties:
+        name:
+          type: string
+        type:
+          $ref: "#/components/schemas/PetType"
+        photoMediaId:
+          type: string
+        birthDate:
+          type: string
+          format: date
+        ageText:
+          type: string
+        weightKg:
+          type: number
+        notes:
+          type: string
+
+    EmergencyListResponse:
+      allOf:
+        - $ref: "#/components/schemas/ApiEnvelope"
+        - type: object
+          required: [data, pagination]
+          properties:
+            data:
+              type: array
+              items:
+                $ref: "#/components/schemas/Emergency"
+            pagination:
+              $ref: "#/components/schemas/Pagination"
+    EmergencyResponse:
+      allOf:
+        - $ref: "#/components/schemas/ApiEnvelope"
+        - type: object
+          required: [data]
+          properties:
+            data:
+              $ref: "#/components/schemas/Emergency"
+    Emergency:
+      type: object
+      required:
+        - id
+        - ownerUserId
+        - petId
+        - type
+        - status
+        - title
+        - description
+        - helpNeeded
+        - urgency
+        - displayLocation
+        - contactPreference
+        - locale
+        - region
+        - timeZone
+        - createdAt
+        - updatedAt
+      properties:
+        id:
+          type: string
+        ownerUserId:
+          type: string
+        petId:
+          type: string
+        type:
+          $ref: "#/components/schemas/EmergencyType"
+        status:
+          $ref: "#/components/schemas/EmergencyStatus"
+        title:
+          type: string
+        description:
+          type: string
+        helpNeeded:
+          type: string
+        urgency:
+          $ref: "#/components/schemas/EmergencyUrgency"
+        displayLocation:
+          type: string
+        approxGeoHash:
+          type: string
+        radiusMeters:
+          type: integer
+        lastSeenAt:
+          type: string
+          format: date-time
+        contactPreference:
+          $ref: "#/components/schemas/ContactPreference"
+        locale:
+          type: string
+        region:
+          type: string
+        timeZone:
+          type: string
+        expiresAt:
+          type: string
+          format: date-time
+        closedAt:
+          type: string
+          format: date-time
+        closeReason:
+          $ref: "#/components/schemas/CloseReason"
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+    CreateEmergencyRequest:
+      type: object
+      required: [petId, type, urgency, title, description, helpNeeded, location, contactPreference, locale, region, timeZone]
+      properties:
+        petId:
+          type: string
+        type:
+          $ref: "#/components/schemas/EmergencyType"
+        urgency:
+          $ref: "#/components/schemas/EmergencyUrgency"
+        title:
+          type: string
+        description:
+          type: string
+        helpNeeded:
+          type: string
+        location:
+          $ref: "#/components/schemas/EmergencyLocationInput"
+        lastSeenAt:
+          type: string
+          format: date-time
+        contactPreference:
+          $ref: "#/components/schemas/ContactPreference"
+        locale:
+          type: string
+        region:
+          type: string
+        timeZone:
+          type: string
+        submitImmediately:
+          type: boolean
+          default: false
+    UpdateEmergencyRequest:
+      type: object
+      properties:
+        title:
+          type: string
+        description:
+          type: string
+        helpNeeded:
+          type: string
+        urgency:
+          $ref: "#/components/schemas/EmergencyUrgency"
+        displayLocation:
+          type: string
+        contactPreference:
+          $ref: "#/components/schemas/ContactPreference"
+    EmergencyLocationInput:
+      type: object
+      required: [displayLocation]
+      properties:
+        exact:
+          $ref: "#/components/schemas/GeoPoint"
+        displayLocation:
+          type: string
+        radiusMeters:
+          type: integer
+          minimum: 100
+    GeoPoint:
+      type: object
+      required: [lat, lng]
+      properties:
+        lat:
+          type: number
+          minimum: -90
+          maximum: 90
+        lng:
+          type: number
+          minimum: -180
+          maximum: 180
+    CloseEmergencyRequest:
+      type: object
+      required: [closeReason]
+      properties:
+        closeReason:
+          $ref: "#/components/schemas/CloseReason"
+        note:
+          type: string
+
+    MatchCandidateListResponse:
+      allOf:
+        - $ref: "#/components/schemas/ApiEnvelope"
+        - type: object
+          required: [data]
+          properties:
+            data:
+              type: array
+              items:
+                $ref: "#/components/schemas/MatchCandidate"
+    MatchCandidate:
+      type: object
+      required: [id, emergencyId, candidateType, reasonCodes, status, createdAt]
+      properties:
+        id:
+          type: string
+        emergencyId:
+          type: string
+        candidateType:
+          $ref: "#/components/schemas/CandidateType"
+        candidateUserId:
+          type: string
+        candidatePetId:
+          type: string
+        distanceMeters:
+          type: integer
+        score:
+          type: number
+        reasonCodes:
+          type: array
+          items:
+            type: string
+          example: [nearby, same_pet_type, recently_active]
+        reasonTextKey:
+          type: string
+          example: matching.reason.nearby_active
+        status:
+          $ref: "#/components/schemas/MatchCandidateStatus"
+        snapshot:
+          type: object
+          additionalProperties: true
+        createdAt:
+          type: string
+          format: date-time
+    JobAcceptedResponse:
+      allOf:
+        - $ref: "#/components/schemas/ApiEnvelope"
+        - type: object
+          required: [data]
+          properties:
+            data:
+              type: object
+              required: [jobId, status]
+              properties:
+                jobId:
+                  type: string
+                status:
+                  type: string
+                  enum: [accepted]
+
+    CreateAlertsRequest:
+      type: object
+      required: [candidateIds, channelPreference, messageTemplateKey]
+      properties:
+        candidateIds:
+          type: array
+          minItems: 1
+          items:
+            type: string
+        channelPreference:
+          type: array
+          minItems: 1
+          items:
+            $ref: "#/components/schemas/AlertChannel"
+        messageTemplateKey:
+          type: string
+          example: emergency.alert.lost_pet
+    AlertDeliveryListResponse:
+      allOf:
+        - $ref: "#/components/schemas/ApiEnvelope"
+        - type: object
+          required: [data]
+          properties:
+            data:
+              type: array
+              items:
+                $ref: "#/components/schemas/AlertDelivery"
+            pagination:
+              $ref: "#/components/schemas/Pagination"
+    AlertDeliveryResponse:
+      allOf:
+        - $ref: "#/components/schemas/ApiEnvelope"
+        - type: object
+          required: [data]
+          properties:
+            data:
+              $ref: "#/components/schemas/AlertDelivery"
+    AlertDelivery:
+      type: object
+      required: [id, emergencyId, channel, provider, status, dedupeKey, createdAt, updatedAt]
+      properties:
+        id:
+          type: string
+        emergencyId:
+          type: string
+        matchCandidateId:
+          type: string
+        recipientUserId:
+          type: string
+        channel:
+          $ref: "#/components/schemas/AlertChannel"
+        provider:
+          type: string
+          example: mock
+        status:
+          $ref: "#/components/schemas/AlertStatus"
+        dedupeKey:
+          type: string
+        sentAt:
+          type: string
+          format: date-time
+        viewedAt:
+          type: string
+          format: date-time
+        respondedAt:
+          type: string
+          format: date-time
+        failedAt:
+          type: string
+          format: date-time
+        failureCode:
+          type: string
+        expiresAt:
+          type: string
+          format: date-time
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+
+    CreateResponseRequest:
+      type: object
+      required: [type, contactConsent]
+      properties:
+        type:
+          $ref: "#/components/schemas/ResponseType"
+        message:
+          type: string
+        contactConsent:
+          type: boolean
+        locationShareConsent:
+          type: boolean
+    ResponseListResponse:
+      allOf:
+        - $ref: "#/components/schemas/ApiEnvelope"
+        - type: object
+          required: [data]
+          properties:
+            data:
+              type: array
+              items:
+                $ref: "#/components/schemas/Response"
+            pagination:
+              $ref: "#/components/schemas/Pagination"
+    ResponseResponse:
+      allOf:
+        - $ref: "#/components/schemas/ApiEnvelope"
+        - type: object
+          required: [data]
+          properties:
+            data:
+              $ref: "#/components/schemas/Response"
+    Response:
+      type: object
+      required: [id, emergencyId, responderUserId, type, contactConsent, status, createdAt]
+      properties:
+        id:
+          type: string
+        emergencyId:
+          type: string
+        alertDeliveryId:
+          type: string
+        responderUserId:
+          type: string
+        type:
+          $ref: "#/components/schemas/ResponseType"
+        message:
+          type: string
+        contactConsent:
+          type: boolean
+        locationShareConsent:
+          type: boolean
+        status:
+          $ref: "#/components/schemas/ResponseStatus"
+        createdAt:
+          type: string
+          format: date-time
+
+    CreateMediaPresignRequest:
+      type: object
+      required: [mediaType, purpose, fileName]
+      properties:
+        mediaType:
+          type: string
+          example: image/jpeg
+        purpose:
+          $ref: "#/components/schemas/MediaPurpose"
+        fileName:
+          type: string
+        fileSizeBytes:
+          type: integer
+    MediaPresignResponse:
+      allOf:
+        - $ref: "#/components/schemas/ApiEnvelope"
+        - type: object
+          required: [data]
+          properties:
+            data:
+              type: object
+              required: [mediaAsset, uploadUrl, expiresAt]
+              properties:
+                mediaAsset:
+                  $ref: "#/components/schemas/MediaAsset"
+                uploadUrl:
+                  type: string
+                  format: uri
+                expiresAt:
+                  type: string
+                  format: date-time
+    MediaAssetResponse:
+      allOf:
+        - $ref: "#/components/schemas/ApiEnvelope"
+        - type: object
+          required: [data]
+          properties:
+            data:
+              $ref: "#/components/schemas/MediaAsset"
+    MediaAsset:
+      type: object
+      required: [id, ownerUserId, storageProvider, bucket, objectKey, mediaType, purpose, visibility, status, createdAt, updatedAt]
+      properties:
+        id:
+          type: string
+        ownerUserId:
+          type: string
+        storageProvider:
+          type: string
+          enum: [s3, oss, r2, mock]
+        bucket:
+          type: string
+        objectKey:
+          type: string
+        mediaType:
+          type: string
+        purpose:
+          $ref: "#/components/schemas/MediaPurpose"
+        fileSizeBytes:
+          type: integer
+        checksum:
+          type: string
+        visibility:
+          $ref: "#/components/schemas/MediaVisibility"
+        status:
+          $ref: "#/components/schemas/MediaStatus"
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+
+    AdminActionRequest:
+      type: object
+      required: [reasonCode]
+      properties:
+        reasonCode:
+          type: string
+        note:
+          type: string
+    AdminActionResponse:
+      allOf:
+        - $ref: "#/components/schemas/ApiEnvelope"
+        - type: object
+          required: [data]
+          properties:
+            data:
+              $ref: "#/components/schemas/AdminAction"
+    AdminAction:
+      type: object
+      required: [id, actorAdminUserId, targetType, targetId, action, reasonCode, createdAt]
+      properties:
+        id:
+          type: string
+        actorAdminUserId:
+          type: string
+        targetType:
+          $ref: "#/components/schemas/AdminTargetType"
+        targetId:
+          type: string
+        action:
+          $ref: "#/components/schemas/AdminActionType"
+        reasonCode:
+          type: string
+        note:
+          type: string
+        previousStatus:
+          type: string
+        nextStatus:
+          type: string
+        createdAt:
+          type: string
+          format: date-time
+    AdminMetricsResponse:
+      allOf:
+        - $ref: "#/components/schemas/ApiEnvelope"
+        - type: object
+          required: [data]
+          properties:
+            data:
+              type: object
+              required: [emergencyCount, alertCount, responseCount, reportCount]
+              properties:
+                emergencyCount:
+                  type: integer
+                alertCount:
+                  type: integer
+                responseCount:
+                  type: integer
+                reportCount:
+                  type: integer
+                responseRate:
+                  type: number
